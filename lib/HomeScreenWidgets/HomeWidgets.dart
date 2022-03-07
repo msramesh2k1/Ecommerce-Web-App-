@@ -2,6 +2,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hovering/hovering.dart';
+import 'package:mrandmrs_ecom_webapp/Helper.dart';
+import 'package:mrandmrs_ecom_webapp/HomeScreenWidgets/accountscree.dart';
+import 'package:mrandmrs_ecom_webapp/HomeScreenWidgets/loginpage.dart';
 
 import '../Widgets/Custom_Widgets.dart';
 import '../constants.dart';
@@ -518,7 +521,19 @@ class TitleWebBox extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(EvaIcons.personOutline),
+                    GestureDetector(
+                        onTap: () {
+                          MRANDMRS.sharedprefs!.getString("uid") == null
+                              ? Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => LoginScreen()))
+                              : Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => AccountScreen()));
+                        },
+                        child: Icon(EvaIcons.personOutline)),
                     const Box(height: 0, width: 20),
                     Icon(EvaIcons.searchOutline),
                     const Box(height: 0, width: 20),

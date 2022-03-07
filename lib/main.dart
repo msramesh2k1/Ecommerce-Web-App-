@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       title: 'MR AND MRS',
-      home: const RegisterScreen(),
+      home: const HomeScreen(),
     );
   }
 }

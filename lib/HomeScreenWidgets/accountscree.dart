@@ -4,6 +4,8 @@ import 'package:mrandmrs_ecom_webapp/HomeScreenWidgets/HomeWidgets.dart';
 import 'package:mrandmrs_ecom_webapp/Widgets/Custom_Widgets.dart';
 import 'package:mrandmrs_ecom_webapp/constants.dart';
 
+import '../Helper.dart';
+
 class AccountScreen extends StatefulWidget {
   const AccountScreen({Key? key}) : super(key: key);
 
@@ -34,7 +36,8 @@ class _AccountScreenState extends State<AccountScreen> {
               ),
               Box(height: 30, width: 0),
               Text(
-                "Welcome Back Ramesh M S",
+                "Welcome Back " +
+                    MRANDMRS.sharedprefs!.getString("name").toString(),
                 style: GoogleFonts.dmSans(
                   textStyle: const TextStyle(
                       fontWeight: FontWeight.normal,
