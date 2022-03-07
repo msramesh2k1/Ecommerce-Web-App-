@@ -7,11 +7,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mrandmrs_ecom_webapp/Helper.dart';
 import 'package:mrandmrs_ecom_webapp/HomeScreenWidgets/HomeWidgets.dart';
 import 'package:mrandmrs_ecom_webapp/HomeScreenWidgets/accountscree.dart';
+import 'package:mrandmrs_ecom_webapp/HomeScreenWidgets/registerpage.dart';
 import 'package:mrandmrs_ecom_webapp/Widgets/Custom_Widgets.dart';
 import 'package:mrandmrs_ecom_webapp/constants.dart';
 
 import '../ErrorAlert.dart';
 import '../HomePage.dart';
+import '../forgotpassword.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -132,9 +134,9 @@ class _LoginScreenState extends State<LoginScreen> {
               Box(height: 10, width: 0),
               GestureDetector(
                 onTap: () {
-                  //  Route route = MaterialPageRoute(
-                  //                   builder: (context) => ForgotPassword());
-                  //               Navigator.push(context, route);
+                  Route route =
+                      MaterialPageRoute(builder: (context) => ForgetPassword());
+                  Navigator.push(context, route);
                 },
                 child: Text(
                   "Forget Password ?",
@@ -195,14 +197,21 @@ class _LoginScreenState extends State<LoginScreen> {
                           letterSpacing: 0),
                     ),
                   ),
-                  Text(
-                    " Create one",
-                    style: GoogleFonts.dmSans(
-                      textStyle: const TextStyle(
-                          fontWeight: FontWeight.normal,
-                          color: Colors.black,
-                          fontSize: 14,
-                          letterSpacing: 0),
+                  GestureDetector(
+                    onTap: () {
+                      Route route = MaterialPageRoute(
+                          builder: (context) => RegisterScreen());
+                      Navigator.pushReplacement(context, route);
+                    },
+                    child: Text(
+                      " Create one",
+                      style: GoogleFonts.dmSans(
+                        textStyle: const TextStyle(
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black,
+                            fontSize: 14,
+                            letterSpacing: 0),
+                      ),
                     ),
                   ),
                 ],
@@ -233,10 +242,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       firebaseUser = authUser.user!;
-      readData(firebaseUser).then((s) {
-        Route route = MaterialPageRoute(builder: (context) => AccountScreen());
-        Navigator.pushReplacement(context, route);
-      });
+      readData(firebaseUser);
     }).catchError((error) {
       Navigator.pop(context);
       showDialog(
@@ -273,6 +279,9 @@ class _LoginScreenState extends State<LoginScreen> {
           .setString("email", dataSnapshot.data()!["email"]);
       await MRANDMRS.sharedprefs!
           .setString("name", dataSnapshot.data()!["name"]);
+    }).whenComplete(() {
+      Route route = MaterialPageRoute(builder: (context) => AccountScreen());
+      Navigator.pushReplacement(context, route);
     });
   }
 }

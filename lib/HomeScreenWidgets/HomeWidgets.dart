@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hovering/hovering.dart';
 import 'package:mrandmrs_ecom_webapp/Helper.dart';
+import 'package:mrandmrs_ecom_webapp/HomePage.dart';
 import 'package:mrandmrs_ecom_webapp/HomeScreenWidgets/accountscree.dart';
 import 'package:mrandmrs_ecom_webapp/HomeScreenWidgets/loginpage.dart';
+import 'package:mrandmrs_ecom_webapp/allitemspage.dart';
 
 import '../Widgets/Custom_Widgets.dart';
 import '../constants.dart';
@@ -484,6 +486,7 @@ class TitleWebBox extends StatelessWidget {
       width: MediaQuery.of(context).size.width,
       color: Color.fromRGBO(230, 224, 215, 1),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Container(
             height: 100,
@@ -545,82 +548,94 @@ class TitleWebBox extends StatelessWidget {
             ),
           ),
           Container(
-            height: 50,
+            height: 30,
             width: MediaQuery.of(context).size.width,
             color: Colors.transparent,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                HoverWidget(
-                  hoverChild: Column(
-                    children: [
-                      Text(
-                        "Home",
-                        style: GoogleFonts.dmSans(
-                          textStyle: const TextStyle(
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black45,
-                              fontSize: 14,
-                              letterSpacing: 0.8),
-                        ),
-                      ),
-                      Box(height: 4, width: 0),
-                      AnimatedContainer(
-                        duration: Duration(seconds: 3),
-                        height: 1.5,
-                        color: Colors.black,
-                        width: 50,
-                      )
-                    ],
-                  ),
-                  onHover: (PointerEnterEvent event) {
-                    print("HELLO");
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => HomeScreen()));
                   },
-                  child: Text(
-                    "Home",
-                    style: GoogleFonts.dmSans(
-                      textStyle: const TextStyle(
-                          fontWeight: FontWeight.normal,
+                  child: HoverWidget(
+                    hoverChild: Column(
+                      children: [
+                        Text(
+                          "Home",
+                          style: GoogleFonts.dmSans(
+                            textStyle: const TextStyle(
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black45,
+                                fontSize: 14,
+                                letterSpacing: 0.8),
+                          ),
+                        ),
+                        Box(height: 4, width: 0),
+                        AnimatedContainer(
+                          duration: Duration(seconds: 3),
+                          height: 1.5,
                           color: Colors.black,
-                          fontSize: 14,
-                          letterSpacing: 0.8),
+                          width: 50,
+                        )
+                      ],
+                    ),
+                    onHover: (PointerEnterEvent event) {
+                      print("HELLO");
+                    },
+                    child: Text(
+                      "Home",
+                      style: GoogleFonts.dmSans(
+                        textStyle: const TextStyle(
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black,
+                            fontSize: 14,
+                            letterSpacing: 0.8),
+                      ),
                     ),
                   ),
                 ),
                 Box(height: 0, width: 30),
-                HoverWidget(
-                  hoverChild: Column(
-                    children: [
-                      Text(
-                        "Shop",
-                        style: GoogleFonts.dmSans(
-                          textStyle: const TextStyle(
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black45,
-                              fontSize: 14,
-                              letterSpacing: 0.8),
-                        ),
-                      ),
-                      Box(height: 4, width: 0),
-                      AnimatedContainer(
-                        duration: Duration(seconds: 3),
-                        height: 1.5,
-                        color: Colors.black,
-                        width: 50,
-                      )
-                    ],
-                  ),
-                  onHover: (PointerEnterEvent event) {
-                    print("HELLO");
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => AllItemsScreen()));
                   },
-                  child: Text(
-                    "Shop",
-                    style: GoogleFonts.dmSans(
-                      textStyle: const TextStyle(
-                          fontWeight: FontWeight.normal,
+                  child: HoverWidget(
+                    hoverChild: Column(
+                      children: [
+                        Text(
+                          "Shop",
+                          style: GoogleFonts.dmSans(
+                            textStyle: const TextStyle(
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black45,
+                                fontSize: 14,
+                                letterSpacing: 0.8),
+                          ),
+                        ),
+                        Box(height: 4, width: 0),
+                        AnimatedContainer(
+                          duration: Duration(seconds: 3),
+                          height: 1.5,
                           color: Colors.black,
-                          fontSize: 14,
-                          letterSpacing: 0.8),
+                          width: 50,
+                        )
+                      ],
+                    ),
+                    onHover: (PointerEnterEvent event) {
+                      print("HELLO");
+                    },
+                    child: Text(
+                      "Shop",
+                      style: GoogleFonts.dmSans(
+                        textStyle: const TextStyle(
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black,
+                            fontSize: 14,
+                            letterSpacing: 0.8),
+                      ),
                     ),
                   ),
                 ),
