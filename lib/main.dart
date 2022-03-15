@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:mrandmrs_ecom_webapp/Helper.dart';
 import 'package:mrandmrs_ecom_webapp/HomePage.dart';
 import 'package:mrandmrs_ecom_webapp/HomeScreenWidgets/accountscree.dart';
 import 'package:mrandmrs_ecom_webapp/HomeScreenWidgets/loginpage.dart';
+import 'package:mrandmrs_ecom_webapp/add_category.dart';
 import 'package:mrandmrs_ecom_webapp/allitemspage.dart';
 import 'package:mrandmrs_ecom_webapp/detailproductscreen.dart';
 import 'package:mrandmrs_ecom_webapp/login.dart';
+import 'package:mrandmrs_ecom_webapp/uploader.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'Admin.dart';
 import 'HomeScreenWidgets/registerpage.dart';
 
 Future<void> main() async {
@@ -46,7 +50,8 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       title: 'MR AND MRS',
-      home: const HomeScreen(),
+      home: HomeScreen(),
+      builder: EasyLoading.init(),
     );
   }
 }

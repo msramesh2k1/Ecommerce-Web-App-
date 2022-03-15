@@ -1,36 +1,22 @@
-import 'dart:io' as io;
-import 'dart:ui';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:universal_html/html.dart';
-import 'package:firebase/firebase.dart' as fb;
+// import 'dart:io' as io;
+// import 'dart:ui';
+// import 'package:firebase/firebase.dart' as fb;
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
+// import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:universal_html/html.dart';
 
-class addwood extends StatefulWidget {
+class addcategory extends StatefulWidget {
   @override
-  _addwoodState createState() => _addwoodState();
+  _addcategoryState createState() => _addcategoryState();
 }
 
-class _addwoodState extends State<addwood> {
-  // bool uploaded = false;
+class _addcategoryState extends State<addcategory> {
   String? imgurl;
-  // io.File img;
-// void uploadFile({@required Function(File file)onSelected}){
-//   InputElement uploadInput = FileUploadInputElement()..accept = 'image/*';
-//   uploadInput.click();
-//   uploadInput.onChange.listen((event) {
-//     final file = uploadInput.files.first;
-//     final reader = FileReader();
-//     reader.readAsDataUrl(file);
-//     reader.onLoadEnd.listen((event) {
-//    onSelected(file);
-//     });
-//   })
-//   ;
-// }
+
   void uploadtoStorage() {
     var uploadInput = FileUploadInputElement()..accept = 'image/*';
 
@@ -41,7 +27,6 @@ class _addwoodState extends State<addwood> {
       final file = uploadInput.files?.first;
       final reader = FileReader();
       reader.readAsDataUrl(file!);
-
       reader.onLoadEnd.listen((event) async {
         var snapshot = await fsv
             .ref()
@@ -50,31 +35,28 @@ class _addwoodState extends State<addwood> {
         String downloadUrl = await snapshot.ref.getDownloadURL();
         setState(() {
           imgurl = downloadUrl;
+          print(imgurl);
         });
       });
     });
-//   uploadFile(onSelected: (file){
-
-// fb.storage().refFromURL("gs://mrandmrs-33fa0.appspot.com")
-// .child('image3').put(file);
-//   });
   }
 
   TextEditingController categorycontroller = new TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return SafeArea(
+        child: Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
         child: Column(
           children: [
-            SizedBox(height: 8),
+            SizedBox(height: 2),
             Padding(
-              padding: const EdgeInsets.only(top: 8.0, left: 50, right: 50),
+              padding: const EdgeInsets.only(top: 10.0, left: 50, right: 50),
               child: Container(
                 decoration: BoxDecoration(
                     color: Color.fromRGBO(230, 224, 215, 1),
-                    borderRadius: BorderRadius.circular(4)),
+                    borderRadius: BorderRadius.circular(0)),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
@@ -88,8 +70,8 @@ class _addwoodState extends State<addwood> {
                               height: 45,
                               width: MediaQuery.of(context).size.width - 132,
                               decoration: BoxDecoration(
-                                  color: Colors.grey[100],
-                                  borderRadius: BorderRadius.circular(4)),
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(0)),
                               child: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 8.0),
@@ -101,7 +83,7 @@ class _addwoodState extends State<addwood> {
                                   keyboardType: TextInputType.name,
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
-                                    labelText: "WOOD NAME",
+                                    labelText: "CATEGORY NAME",
                                     labelStyle: TextStyle(
                                         color: Colors.black38,
                                         fontSize: 12,
@@ -113,6 +95,7 @@ class _addwoodState extends State<addwood> {
                           ),
                         ],
                       ),
+                      //SizedBox(height: 5),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -121,6 +104,8 @@ class _addwoodState extends State<addwood> {
                             child: imgurl == null
                                 ? GestureDetector(
                                     onTap: () {
+                                      print(
+                                          categorycontroller.text.trim() + "2");
                                       uploadtoStorage();
                                     },
                                     child: Padding(
@@ -128,21 +113,21 @@ class _addwoodState extends State<addwood> {
                                       child: Container(
                                         decoration: BoxDecoration(
                                             borderRadius:
-                                                BorderRadius.circular(4),
-                                            color: Colors.grey[100]),
+                                                BorderRadius.circular(0),
+                                            color: Colors.white),
                                         height: 150,
                                         width:
                                             MediaQuery.of(context).size.width -
                                                 132,
                                         child: Center(
                                           child: Text(
-                                            "Choose Image",
-                                            style: GoogleFonts.josefinSans(
+                                            "CHOOSE IMAGE",
+                                            style: GoogleFonts.dmSans(
                                               textStyle: TextStyle(
-                                                  fontWeight: FontWeight.normal,
-                                                  color: Colors.black,
-                                                  fontSize: 14,
-                                                  letterSpacing: 0),
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black38,
+                                                  fontSize: 12,
+                                                  letterSpacing: 2),
                                             ),
                                           ),
                                         ),
@@ -154,6 +139,7 @@ class _addwoodState extends State<addwood> {
                                     ),
                                   )
                                 : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
@@ -176,47 +162,53 @@ class _addwoodState extends State<addwood> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          GestureDetector(
-                              onTap: () {
-                                FirebaseFirestore.instance
-                                    .collection("Woods")
-                                    .doc(categorycontroller.text
-                                        .toUpperCase()
-                                        .toString())
-                                    .set({
-                                      "image": imgurl,
-                                      "name": categorycontroller.text
-                                          .toUpperCase()
-                                          .toString(),
-                                    })
-                                    .whenComplete(() => EasyLoading.showToast(
-                                        "Wood Added Successfully"))
-                                    .then((value) {
-                                      Navigator.pop(context);
-                                    });
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Container(
-                                  width: 100,
-                                  child: Center(
-                                    child: Text(
-                                      "Upload",
-                                      style: GoogleFonts.josefinSans(
-                                        textStyle: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                            fontSize: 18,
-                                            letterSpacing: 0),
+                          Padding(
+                            padding: const EdgeInsets.all(0.0),
+                            child: GestureDetector(
+                                onTap: () {
+                                  FirebaseFirestore.instance
+                                      .collection("Category")
+                                      .doc(categorycontroller.text
+                                          .trim()
+                                          .toUpperCase())
+                                      .set({
+                                    "image": imgurl,
+                                    "name": categorycontroller.text
+                                        .trim()
+                                        .toUpperCase(),
+                                  }).whenComplete(() => EasyLoading.showToast(
+                                          "Category Added Successfully"));
+                                  //     .then((value) => Navigator.pop(context));
+                                  // Navigator.pop(context);
+
+                                  categorycontroller.clear();
+                                  setState(() {
+                                    imgurl = null;
+                                  });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                    width: 100,
+                                    child: Center(
+                                      child: Text(
+                                        "Upload",
+                                        style: GoogleFonts.dmSans(
+                                          textStyle: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              letterSpacing: 0),
+                                        ),
                                       ),
                                     ),
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                        color: Colors.black,
+                                        borderRadius: BorderRadius.circular(0)),
                                   ),
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                      color: Colors.black,
-                                      borderRadius: BorderRadius.circular(4)),
-                                ),
-                              )),
+                                )),
+                          ),
                         ],
                       ),
                     ],
@@ -227,6 +219,6 @@ class _addwoodState extends State<addwood> {
           ],
         ),
       ),
-    );
+    ));
   }
 }

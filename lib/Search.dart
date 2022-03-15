@@ -1,8 +1,7 @@
 // import 'package:flutter/material.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:mr_and_mrs/DetailedScreen.dart';
 // import 'package:google_fonts/google_fonts.dart';
-// import 'package:mr_and_mrs/constants.dart';
+// import 'package:mrandmrs_ecom_webapp/constants.dart';
 
 // class Search extends StatefulWidget {
 //   @override
@@ -151,7 +150,7 @@
 //                   return GridView.count(
 //                     scrollDirection: Axis.vertical,
 //                     crossAxisCount: 2,
-//                     children: snapshot.data.docs
+//                     children: snapshot.data!.docs
 //                         .map((DocumentSnapshot documentSnapshot) {
 //                       return Container(
 //                         height: 60,
@@ -159,13 +158,13 @@
 //                           padding: const EdgeInsets.all(30.0),
 //                           child: GestureDetector(
 //                             onTap: () {
-//                               Navigator.push(
-//                                   context,
-//                                   MaterialPageRoute(
-//                                       builder: (context) => DetailScreen(
-//                                             // queryDocumentSnapshot:
-//                                             //     documentSnapshot,
-//                                           )));
+//                               // Navigator.push(
+//                               //     context,
+//                               //     MaterialPageRoute(
+//                               //         builder: (context) => DetailScreen(
+//                               //               // queryDocumentSnapshot:
+//                               //               //     documentSnapshot,
+//                               //             )));
 //                             },
 //                             child: Column(
 //                               children: [
@@ -182,7 +181,7 @@
 //                                     Center(
 //                                   child: Text(
 //                                     documentSnapshot
-//                                         .data()['name']
+//                                         .data()!['name']
 //                                         ,
 //                                     style: GoogleFonts.josefinSans(
 //                                       textStyle: TextStyle(

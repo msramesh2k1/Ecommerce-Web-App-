@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mrandmrs_ecom_webapp/Admin.dart';
 import 'package:mrandmrs_ecom_webapp/Helper.dart';
 import 'package:mrandmrs_ecom_webapp/Widgets/Responsive_widget.dart';
+import 'package:mrandmrs_ecom_webapp/add_category.dart';
 import 'package:mrandmrs_ecom_webapp/animatedimage.dart';
 import 'package:mrandmrs_ecom_webapp/constants.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -311,14 +313,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Box(height: 30, width: 0),
                   Center(
-                    child: Text(
-                      "LATEST ITEMS",
-                      style: GoogleFonts.dmSans(
-                        textStyle: TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black,
-                            fontSize: 14,
-                            letterSpacing: 4),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => Admin()));
+                      },
+                      child: Text(
+                        "LATEST ITEMS",
+                        style: GoogleFonts.dmSans(
+                          textStyle: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 14,
+                              letterSpacing: 4),
+                        ),
                       ),
                     ),
                   ),
@@ -328,7 +336,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: MediaQuery.of(context).size.width,
                     child: StreamBuilder<QuerySnapshot>(
                       stream: FirebaseFirestore.instance
-                          .collection("category")
+                          .collection("Category")
                           .snapshots(),
                       builder: (context, snapshots) {
                         return GridView.builder(

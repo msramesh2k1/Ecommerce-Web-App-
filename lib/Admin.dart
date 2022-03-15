@@ -1,238 +1,207 @@
-// import 'dart:io';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:flutter/foundation.dart';
-// import 'package:flutter/material.dart';
-// import 'package:google_fonts/google_fonts.dart';
-// import 'package:firebase_storage/firebase_storage.dart';
-// import 'package:image_picker/image_picker.dart';
-// import 'package:mr_and_mrs/AddCategory.dart';
-// import 'package:mr_and_mrs/Helper.dart';
-// import 'package:mr_and_mrs/Registerer.dart';
-// import 'package:mr_and_mrs/addwood.dart';
-// import 'package:mr_and_mrs/uploader.dart';
-// import 'package:url_launcher/url_launcher.dart';
+import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mrandmrs_ecom_webapp/HomeScreenWidgets/HomeWidgets.dart';
+import 'package:mrandmrs_ecom_webapp/HomeScreenWidgets/loginpage.dart';
+import 'package:mrandmrs_ecom_webapp/uploader.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-// import 'Register.dart';
-// import 'constants.dart';
-// import 'login.dart';
+import 'Register.dart';
+import 'add_category.dart';
+import 'addwood.dart';
+import 'constants.dart';
+import 'login.dart';
 
-// class Admin extends StatefulWidget {
-//   @override
-//   _AdminState createState() => _AdminState();
-// }
+class Admin extends StatefulWidget {
+  @override
+  _AdminState createState() => _AdminState();
+}
 
-// class _AdminState extends State<Admin> {
-  
+class _AdminState extends State<Admin> {
+  String? selected = "Add Wood";
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TitleAdminWebBox(),
+              SizedBox(height: 30),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => addcategory()));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 20.0, right: 20),
+                        child: Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  selected = "Add Category";
+                                });
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  //shape: BoxShape.circle,
+                                  color: Color.fromRGBO(230, 224, 215, 1),
+                                ),
+                                height: 40,
+                                width: 200,
+                                //  width:20,
 
+                                child: Center(
+                                  child: Text(
+                                    "Add Category",
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.dmSans(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.normal,
+                                          color: Colors.black45,
+                                          fontSize: 14,
+                                          letterSpacing: 0.5),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            selected == "Add Category"
+                                ? Container(
+                                    height: 3,
+                                    decoration: BoxDecoration(
+                                        color: Colors.black54,
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    width: 100,
+                                  )
+                                : SizedBox()
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => addwood()));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 20.0, right: 20),
+                        child: Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                print(selected);
+                                setState(() {
+                                  selected = "Add Wood";
+                                });
+                                print(selected);
+                                setState(() {});
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  //shape: BoxShape.circle,
+                                  color: Color.fromRGBO(230, 224, 215, 1),
+                                ),
+                                height: 40,
+                                width: 200,
+                                //  width:20,
 
+                                child: Center(
+                                  child: Text(
+                                    "Add Wood",
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.dmSans(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.normal,
+                                          color: Colors.black45,
+                                          fontSize: 14,
+                                          letterSpacing: 0.5),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            selected == "Add Wood"
+                                ? Container(
+                                    height: 3,
+                                    decoration: BoxDecoration(
+                                        color: Colors.black54,
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    width: 100,
+                                  )
+                                : SizedBox()
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AdminPanel()));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 20.0, right: 20),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            //shape: BoxShape.circle,
+                            color: Color.fromRGBO(230, 224, 215, 1),
+                          ),
+                          height: 40,
+                          width: 200,
+                          //  width:20,
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//            leading: IconButton(
-//             onPressed: () {
-//               Navigator.pop(context);
-//             },
-//             icon: Icon(Icons.arrow_back_ios_sharp,
-//                 color: kBackgroundColor, size: 12)),
-//         leadingWidth: 25,
-//     backgroundColor: Colors.white,
-//     title: Text(
-//             "Admin Panel",
-//             style: GoogleFonts.josefinSans(
-//               textStyle: TextStyle(
-//                   fontWeight: FontWeight.bold,
-//                   color: kBackgroundColor,
-//                   fontSize: 18,
-//                   letterSpacing: 0),
-//             ),
-//           ),
-// elevation: 0,
-//         ),
-      
-//       backgroundColor: Colors.white,
-//       body: Container(
-//         child: SingleChildScrollView(
-//           child: Column(
-//             mainAxisAlignment:MainAxisAlignment.center,
-//             children: [
-//               SizedBox(height: 20),
-//               Center(
-//                 child: GestureDetector(
-//                   onTap: () {
-//                     Navigator.push(context,
-//                         MaterialPageRoute(builder: (context) =>
-//                          addcategory()));
-//                   },
-//                   child: Padding(
-//                     padding: const EdgeInsets.only(left: 20.0, right: 20),
-//                     child: Container(
-//                       decoration: BoxDecoration(
-//                           color: kBackgroundColor,
-//                           borderRadius: BorderRadius.circular(10)),
-//                       height: 55,
-//                       //  width:20,
-
-//                       child: Center(
-//                         child: Text(
-//                           "ADD CATEGORY",
-//                           style: GoogleFonts.lato(
-//                             textStyle: TextStyle(
-//                                 fontWeight: FontWeight.bold,
-//                                 color: Colors.white,
-//                                 fontSize: 12,
-//                                 letterSpacing: 3),
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//               SizedBox(
-//                 height: 10,
-//               ),
-//               Center(
-//                 child: GestureDetector(
-//                   onTap: () {
-//                     Navigator.push(context,
-//                         MaterialPageRoute(builder: (context) => addwood()));
-//                   },
-//                   child: Padding(
-//                     padding: const EdgeInsets.only(left: 20.0, right: 20),
-//                     child: Container(
-//                       decoration: BoxDecoration(
-//                           color: kBackgroundColor,
-//                           borderRadius: BorderRadius.circular(10)),
-//                       height: 55,
-//                       //  width:20,
-
-//                       child: Center(
-//                         child: Text(
-//                           "ADD WOOD",
-//                           style: GoogleFonts.lato(
-//                             textStyle: TextStyle(
-//                                 fontWeight: FontWeight.bold,
-//                                 color: Colors.white,
-//                                 fontSize: 12,
-//                                 letterSpacing: 3),
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//               SizedBox(
-//                 height: 10,
-//               ),
-//               Center(
-//                 child: GestureDetector(
-//                   onTap: () {
-//                     Navigator.push(context,
-//                         MaterialPageRoute(builder: (context) => UploadPage()));
-//                   },
-//                   child: Padding(
-//                     padding: const EdgeInsets.only(left: 20.0, right: 20),
-//                     child: Container(
-//                       decoration: BoxDecoration(
-//                           color: kBackgroundColor,
-//                           borderRadius: BorderRadius.circular(10)),
-//                       height: 55,
-//                       //  width:20,
-
-//                       child: Center(
-//                         child: Text(
-//                           "UPLOAD ITEMS",
-//                           style: GoogleFonts.lato(
-//                             textStyle: TextStyle(
-//                                 fontWeight: FontWeight.bold,
-//                                 color: Colors.white,
-//                                 fontSize: 12,
-//                                 letterSpacing: 3),
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//               SizedBox(
-//                 height: 10,
-//               ),
-//               Center(
-//                 child: GestureDetector(
-//                   onTap: () {
-//                     Navigator.push(context,
-//                         MaterialPageRoute(builder: (context) => Login()));
-//                   },
-//                   child: Padding(
-//                     padding: const EdgeInsets.only(left: 20.0, right: 20),
-//                     child: Container(
-//                       decoration: BoxDecoration(
-//                           color: kBackgroundColor,
-//                           borderRadius: BorderRadius.circular(10)),
-//                       height: 55,
-//                       //  width:20,
-
-//                       child: Center(
-//                         child: Text(
-//                           "ALL ITEMS",
-//                           style: GoogleFonts.lato(
-//                             textStyle: TextStyle(
-//                                 fontWeight: FontWeight.bold,
-//                                 color: Colors.white,
-//                                 fontSize: 12,
-//                                 letterSpacing: 3),
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//               SizedBox(
-//                 height: 10,
-//               ),
-//               Center(
-//                 child: GestureDetector(
-//                   onTap: () {
-//                     Navigator.push(context,
-//                         MaterialPageRoute(builder: (context) => Registerer()));
-//                   },
-//                   child: Padding(
-//                     padding: const EdgeInsets.only(left: 20.0, right: 20),
-//                     child: Container(
-//                       decoration: BoxDecoration(
-//                           color: kBackgroundColor,
-//                           borderRadius: BorderRadius.circular(10)),
-//                       height: 55,
-//                       //  width:20,
-
-//                       child: Center(
-//                         child: Text(
-//                           "ORDERS",
-//                           style: GoogleFonts.lato(
-//                             textStyle: TextStyle(
-//                                 fontWeight: FontWeight.bold,
-//                                 color: Colors.white,
-//                                 fontSize: 12,
-//                                 letterSpacing: 3),
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//               SizedBox(
-//                 height: 20,
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
+                          child: Center(
+                            child: Text(
+                              "Add Items",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.dmSans(
+                                textStyle: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.black45,
+                                    fontSize: 14,
+                                    letterSpacing: 0.5),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                  height: 400,
+                  child: selected == "Add Category" ? addcategory() : addwood(),
+                  width: MediaQuery.of(context).size.width,
+                  decoration:
+                      BoxDecoration(color: Color.fromRGBO(230, 224, 215, 1)))
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

@@ -1,7 +1,10 @@
+import 'package:cool_dropdown/cool_dropdown.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hovering/hovering.dart';
+import 'package:mrandmrs_ecom_webapp/Admin.dart';
+import 'package:mrandmrs_ecom_webapp/CartPage.dart';
 import 'package:mrandmrs_ecom_webapp/Helper.dart';
 import 'package:mrandmrs_ecom_webapp/HomePage.dart';
 import 'package:mrandmrs_ecom_webapp/HomeScreenWidgets/accountscree.dart';
@@ -540,7 +543,17 @@ class TitleWebBox extends StatelessWidget {
                     const Box(height: 0, width: 20),
                     Icon(EvaIcons.searchOutline),
                     const Box(height: 0, width: 20),
-                    Icon(EvaIcons.shoppingBagOutline),
+                    GestureDetector(
+                        onTap: () {
+                          MRANDMRS.sharedprefs!.getString("uid") == null
+                              ? Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => LoginScreen()))
+                              : Navigator.push(context,
+                                  MaterialPageRoute(builder: (_) => cart()));
+                        },
+                        child: Icon(EvaIcons.shoppingBagOutline)),
                     const Box(height: 0, width: 40),
                   ],
                 ),
@@ -624,9 +637,7 @@ class TitleWebBox extends StatelessWidget {
                         )
                       ],
                     ),
-                    onHover: (PointerEnterEvent event) {
-                      print("HELLO");
-                    },
+                    onHover: (PointerEnterEvent event) {},
                     child: Text(
                       "Shop",
                       style: GoogleFonts.dmSans(
@@ -741,6 +752,220 @@ class TitleWebBox extends StatelessWidget {
                   },
                   child: Text(
                     "About us",
+                    style: GoogleFonts.dmSans(
+                      textStyle: const TextStyle(
+                          fontWeight: FontWeight.normal,
+                          color: Colors.black,
+                          fontSize: 14,
+                          letterSpacing: 0.8),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class TitleAdminWebBox extends StatelessWidget {
+  const TitleAdminWebBox({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 160,
+      width: MediaQuery.of(context).size.width,
+      color: Color.fromRGBO(230, 224, 215, 1),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Container(
+            height: 100,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Box(height: 0, width: 40),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Mr & Mrs",
+                      style: GoogleFonts.novaSlim(
+                        textStyle: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: kBackgroundColor,
+                            fontSize: 25,
+                            letterSpacing: 0),
+                      ),
+                    ),
+                    Text(
+                      "Design Wood Works",
+                      style: GoogleFonts.openSans(
+                        textStyle: const TextStyle(
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black,
+                            fontSize: 11,
+                            letterSpacing: 1),
+                      ),
+                    ),
+                  ],
+                ),
+                Spacer(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Box(height: 0, width: 20),
+                    GestureDetector(
+                        onTap: () {
+                          MRANDMRS.sharedprefs!.getString("uid") == null
+                              ? Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => LoginScreen()))
+                              : Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => AccountScreen()));
+                        },
+                        child: Icon(EvaIcons.personOutline)),
+                    const Box(height: 0, width: 20),
+                    GestureDetector(
+                        onTap: () {
+                          MRANDMRS.sharedprefs!.getString("uid") == null
+                              ? Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => LoginScreen()))
+                              : Navigator.push(context,
+                                  MaterialPageRoute(builder: (_) => cart()));
+                        },
+                        child: Icon(EvaIcons.shoppingBagOutline)),
+                    const Box(height: 0, width: 40),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Container(
+            height: 30,
+            width: MediaQuery.of(context).size.width,
+            color: Colors.transparent,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context, MaterialPageRoute(builder: (_) => Admin()));
+                  },
+                  child: HoverWidget(
+                    hoverChild: Column(
+                      children: [
+                        Text(
+                          "Add Items",
+                          style: GoogleFonts.dmSans(
+                            textStyle: const TextStyle(
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black45,
+                                fontSize: 14,
+                                letterSpacing: 0.8),
+                          ),
+                        ),
+                        Box(height: 4, width: 0),
+                        AnimatedContainer(
+                          duration: Duration(seconds: 3),
+                          height: 1.5,
+                          color: Colors.black,
+                          width: 50,
+                        )
+                      ],
+                    ),
+                    onHover: (PointerEnterEvent event) {
+                      print("HELLO");
+                    },
+                    child: Text(
+                      "Add Items",
+                      style: GoogleFonts.dmSans(
+                        textStyle: const TextStyle(
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black,
+                            fontSize: 14,
+                            letterSpacing: 0.8),
+                      ),
+                    ),
+                  ),
+                ),
+                Box(height: 0, width: 30),
+                HoverWidget(
+                  hoverChild: Column(
+                    children: [
+                      Text(
+                        "Orders",
+                        style: GoogleFonts.dmSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black45,
+                              fontSize: 14,
+                              letterSpacing: 0.8),
+                        ),
+                      ),
+                      Box(height: 4, width: 0),
+                      AnimatedContainer(
+                        duration: Duration(seconds: 3),
+                        height: 1.5,
+                        color: Colors.black,
+                        width: 50,
+                      )
+                    ],
+                  ),
+                  onHover: (PointerEnterEvent event) {
+                    print("HELLO");
+                  },
+                  child: Text(
+                    "Orders",
+                    style: GoogleFonts.dmSans(
+                      textStyle: const TextStyle(
+                          fontWeight: FontWeight.normal,
+                          color: Colors.black,
+                          fontSize: 14,
+                          letterSpacing: 0.8),
+                    ),
+                  ),
+                ),
+                Box(height: 0, width: 30),
+                HoverWidget(
+                  hoverChild: Column(
+                    children: [
+                      Text(
+                        "Users",
+                        style: GoogleFonts.dmSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black45,
+                              fontSize: 14,
+                              letterSpacing: 0.8),
+                        ),
+                      ),
+                      Box(height: 4, width: 0),
+                      AnimatedContainer(
+                        duration: Duration(seconds: 3),
+                        height: 1.5,
+                        color: Colors.black,
+                        width: 50,
+                      )
+                    ],
+                  ),
+                  onHover: (PointerEnterEvent event) {
+                    print("HELLO");
+                  },
+                  child: Text(
+                    "Users",
                     style: GoogleFonts.dmSans(
                       textStyle: const TextStyle(
                           fontWeight: FontWeight.normal,
