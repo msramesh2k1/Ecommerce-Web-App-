@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:mrandmrs_ecom_webapp/Helper.dart';
+import 'package:mrandmrs_ecom_webapp/users/views/Helper.dart';
 
 
 class CartController extends ChangeNotifier {

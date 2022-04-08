@@ -3,13 +3,17 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hovering/hovering.dart';
-import 'package:mrandmrs_ecom_webapp/Admin.dart';
 import 'package:mrandmrs_ecom_webapp/CartPage.dart';
-import 'package:mrandmrs_ecom_webapp/Helper.dart';
-import 'package:mrandmrs_ecom_webapp/HomePage.dart';
-import 'package:mrandmrs_ecom_webapp/HomeScreenWidgets/accountscree.dart';
-import 'package:mrandmrs_ecom_webapp/HomeScreenWidgets/loginpage.dart';
-import 'package:mrandmrs_ecom_webapp/allitemspage.dart';
+import 'package:mrandmrs_ecom_webapp/users/views/Helper.dart';
+import 'package:mrandmrs_ecom_webapp/HomeScreenWidgets/aboutus.dart';
+import 'package:mrandmrs_ecom_webapp/Orders.dart';
+import 'package:mrandmrs_ecom_webapp/users/views/HomePage.dart';
+import 'package:mrandmrs_ecom_webapp/users/views/accountscree.dart';
+import 'package:mrandmrs_ecom_webapp/users/views/loginpage.dart';
+import 'package:mrandmrs_ecom_webapp/users/views/Search.dart';
+import 'package:mrandmrs_ecom_webapp/users/views/Stepper.dart';
+import 'package:mrandmrs_ecom_webapp/users/views/allitemspage.dart';
+import 'package:mrandmrs_ecom_webapp/users/views/permium.dart';
 
 import '../Widgets/Custom_Widgets.dart';
 import '../constants.dart';
@@ -541,7 +545,14 @@ class TitleWebBox extends StatelessWidget {
                         },
                         child: Icon(EvaIcons.personOutline)),
                     const Box(height: 0, width: 20),
-                    Icon(EvaIcons.searchOutline),
+                    GestureDetector(
+                        onTap: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (_) {
+                            return Search();
+                          }));
+                        },
+                        child: Icon(EvaIcons.searchOutline)),
                     const Box(height: 0, width: 20),
                     GestureDetector(
                         onTap: () {
@@ -550,8 +561,10 @@ class TitleWebBox extends StatelessWidget {
                                   context,
                                   MaterialPageRoute(
                                       builder: (_) => LoginScreen()))
-                              : Navigator.push(context,
-                                  MaterialPageRoute(builder: (_) => cart()));
+                              : Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => StepperCart()));
                         },
                         child: Icon(EvaIcons.shoppingBagOutline)),
                     const Box(height: 0, width: 40),
@@ -651,113 +664,131 @@ class TitleWebBox extends StatelessWidget {
                   ),
                 ),
                 Box(height: 0, width: 30),
-                HoverWidget(
-                  hoverChild: Column(
-                    children: [
-                      Text(
-                        "Premium",
-                        style: GoogleFonts.dmSans(
-                          textStyle: const TextStyle(
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black45,
-                              fontSize: 14,
-                              letterSpacing: 0.8),
-                        ),
-                      ),
-                      Box(height: 4, width: 0),
-                      AnimatedContainer(
-                        duration: Duration(seconds: 3),
-                        height: 1.5,
-                        color: Colors.black,
-                        width: 50,
-                      )
-                    ],
-                  ),
-                  onHover: (PointerEnterEvent event) {
-                    print("HELLO");
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context, MaterialPageRoute(builder: (_) => Permium()));
                   },
-                  child: Text(
-                    "Permium",
-                    style: GoogleFonts.dmSans(
-                      textStyle: const TextStyle(
-                          fontWeight: FontWeight.normal,
+                  child: HoverWidget(
+                    hoverChild: Column(
+                      children: [
+                        Text(
+                          "Premium",
+                          style: GoogleFonts.dmSans(
+                            textStyle: const TextStyle(
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black45,
+                                fontSize: 14,
+                                letterSpacing: 0.8),
+                          ),
+                        ),
+                        Box(height: 4, width: 0),
+                        AnimatedContainer(
+                          duration: Duration(seconds: 3),
+                          height: 1.5,
                           color: Colors.black,
-                          fontSize: 14,
-                          letterSpacing: 0.8),
+                          width: 50,
+                        )
+                      ],
+                    ),
+                    onHover: (PointerEnterEvent event) {
+                      print("HELLO");
+                    },
+                    child: Text(
+                      "Permium",
+                      style: GoogleFonts.dmSans(
+                        textStyle: const TextStyle(
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black,
+                            fontSize: 14,
+                            letterSpacing: 0.8),
+                      ),
                     ),
                   ),
                 ),
                 Box(height: 0, width: 30),
-                HoverWidget(
-                  hoverChild: Column(
-                    children: [
-                      Text(
-                        "Orders",
-                        style: GoogleFonts.dmSans(
-                          textStyle: const TextStyle(
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black45,
-                              fontSize: 14,
-                              letterSpacing: 0.8),
-                        ),
-                      ),
-                      Box(height: 4, width: 0),
-                      AnimatedContainer(
-                        duration: Duration(seconds: 3),
-                        height: 1.5,
-                        color: Colors.black,
-                        width: 50,
-                      )
-                    ],
-                  ),
-                  onHover: (PointerEnterEvent event) {
-                    print("HELLO");
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context, MaterialPageRoute(builder: (_) => Orders()));
                   },
-                  child: Text(
-                    "Orders",
-                    style: GoogleFonts.dmSans(
-                      textStyle: const TextStyle(
-                          fontWeight: FontWeight.normal,
+                  child: HoverWidget(
+                    hoverChild: Column(
+                      children: [
+                        Text(
+                          "Orders",
+                          style: GoogleFonts.dmSans(
+                            textStyle: const TextStyle(
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black45,
+                                fontSize: 14,
+                                letterSpacing: 0.8),
+                          ),
+                        ),
+                        Box(height: 4, width: 0),
+                        AnimatedContainer(
+                          duration: Duration(seconds: 3),
+                          height: 1.5,
                           color: Colors.black,
-                          fontSize: 14,
-                          letterSpacing: 0.8),
+                          width: 50,
+                        )
+                      ],
+                    ),
+                    onHover: (PointerEnterEvent event) {
+                      print("HELLO");
+                    },
+                    child: Text(
+                      "Orders",
+                      style: GoogleFonts.dmSans(
+                        textStyle: const TextStyle(
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black,
+                            fontSize: 14,
+                            letterSpacing: 0.8),
+                      ),
                     ),
                   ),
                 ),
                 Box(height: 0, width: 30),
-                HoverWidget(
-                  hoverChild: Column(
-                    children: [
-                      Text(
-                        "About us",
-                        style: GoogleFonts.dmSans(
-                          textStyle: const TextStyle(
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black45,
-                              fontSize: 14,
-                              letterSpacing: 0.8),
-                        ),
-                      ),
-                      Box(height: 4, width: 0),
-                      AnimatedContainer(
-                        duration: Duration(seconds: 3),
-                        height: 1.5,
-                        color: Colors.black,
-                        width: 50,
-                      )
-                    ],
-                  ),
-                  onHover: (PointerEnterEvent event) {
-                    print("HELLO");
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context, MaterialPageRoute(builder: (_) => AboutUs()));
                   },
-                  child: Text(
-                    "About us",
-                    style: GoogleFonts.dmSans(
-                      textStyle: const TextStyle(
-                          fontWeight: FontWeight.normal,
+                  child: HoverWidget(
+                    hoverChild: Column(
+                      children: [
+                        Text(
+                          "About us",
+                          style: GoogleFonts.dmSans(
+                            textStyle: const TextStyle(
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black45,
+                                fontSize: 14,
+                                letterSpacing: 0.8),
+                          ),
+                        ),
+                        Box(height: 4, width: 0),
+                        AnimatedContainer(
+                          duration: Duration(seconds: 3),
+                          height: 1.5,
                           color: Colors.black,
-                          fontSize: 14,
-                          letterSpacing: 0.8),
+                          width: 50,
+                        )
+                      ],
+                    ),
+                    onHover: (PointerEnterEvent event) {
+                      print("HELLO");
+                    },
+                    child: Text(
+                      "About us",
+                      style: GoogleFonts.dmSans(
+                        textStyle: const TextStyle(
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black,
+                            fontSize: 14,
+                            letterSpacing: 0.8),
+                      ),
                     ),
                   ),
                 ),
@@ -861,8 +892,8 @@ class TitleAdminWebBox extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                        context, MaterialPageRoute(builder: (_) => Admin()));
+                    // Navigator.push(
+                    //     context, MaterialPageRoute(builder: (_) => Admin()));
                   },
                   child: HoverWidget(
                     hoverChild: Column(

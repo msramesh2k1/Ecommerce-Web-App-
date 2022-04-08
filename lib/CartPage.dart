@@ -2,12 +2,12 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mrandmrs_ecom_webapp/HomePage.dart';
+import 'package:mrandmrs_ecom_webapp/users/views/HomePage.dart';
 import 'package:mrandmrs_ecom_webapp/HomeScreenWidgets/HomeWidgets.dart';
 import 'package:mrandmrs_ecom_webapp/Widgets/Custom_Widgets.dart';
 
 import 'Address.dart';
-import 'Helper.dart';
+import 'users/views/Helper.dart';
 
 class cart extends StatefulWidget {
   //final int cartno;

@@ -3,19 +3,19 @@
 // import 'package:flutter/services.dart';
 // import 'package:google_fonts/google_fonts.dart';
 // import 'package:intl/intl.dart';
-// import 'package:mr_and_mrs/Helper.dart';
+// import 'package:mrandmrs_ecom_webapp/users/views/splash_screen.dart';
 
 // import 'Address.dart';
 // import 'AddressINfo.dart';
+// import 'Helper.dart';
 // import 'OrderCard.dart';
-// import 'SplashScreen.dart';
 
 // String getOrderId = "";
 
 // class OrderDetails extends StatelessWidget {
 //   final String orderID;
 
-//   const OrderDetails({Key key, this.orderID}) : super(key: key);
+//   const OrderDetails({Key? key,required this.orderID}) : super(key: key);
 //   @override
 //   Widget build(BuildContext context) {
 //     getOrderId = orderID;
@@ -25,7 +25,7 @@
 //           child: FutureBuilder<DocumentSnapshot>(
 //             future: FirebaseFirestore.instance
 //                 .collection("users")
-//                 .doc(MRANDMRS.sharedprefs.getString("uid"))
+//                 .doc(MRANDMRS.sharedprefs!.getString("uid"))
 //                 .collection("orders")
 //                 .doc(orderID)
 //                 .get(),
@@ -272,7 +272,7 @@
 //   confirmeduserOrderReceiver(BuildContext context, String mOrderId) {
 //     FirebaseFirestore.instance
 //         .collection("users")
-//         .doc(MRANDMRS.sharedprefs.getString("uid"))
+//         .doc(MRANDMRS.sharedprefs!.getString("uid"))
 //         .collection("orders")
 //         .doc(mOrderId)
 //         .delete();
