@@ -158,9 +158,7 @@ class AddAddress extends StatelessWidget {
                               .collection("users")
                               .doc(MRANDMRS.sharedprefs!.getString("uid"))
                               .collection("address")
-                              .doc(DateTime.now()
-                                  .millisecondsSinceEpoch
-                                  .toString())
+                              .doc(addressid.toString())
                               .set({
                             "id": addressid.toString(),
                             "name": addressName.text.trim(),
@@ -172,9 +170,9 @@ class AddAddress extends StatelessWidget {
                             "flatNumber": addressFlatNumber.text.trim(),
                             "city": addressDistrict.text.trim(),
                           }).then((value) {
-                            EasyLoading.showToast("Success");
+                            EasyLoading.showToast("Success",toastPosition: EasyLoadingToastPosition.bottom);
                           });
-                          //     Navigator.pop(context);
+                              Navigator.pop(context);
                         },
                         child: Container(
                           height: 55,

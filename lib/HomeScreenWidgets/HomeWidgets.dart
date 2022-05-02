@@ -16,7 +16,7 @@ import 'package:mrandmrs_ecom_webapp/users/views/allitemspage.dart';
 import 'package:mrandmrs_ecom_webapp/users/views/permium.dart';
 
 import '../Widgets/Custom_Widgets.dart';
-import '../constants.dart';
+import '../../constants.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 
 class TopNotifyBlackBox extends StatelessWidget {
@@ -226,9 +226,10 @@ class EndBox extends StatelessWidget {
         children: [
           Box(height: 100, width: 0),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(width: 100,),
               Container(
                 width: 500,
                 height: 300,
@@ -326,153 +327,143 @@ class EndBox extends StatelessWidget {
                   ],
                 ),
               ),
-              Container(
-                width: 400,
-                height: 400,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "CONNECT WITH US",
-                      style: GoogleFonts.dmSans(
-                        textStyle: const TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black,
-                            fontSize: 14,
-                            letterSpacing: 2),
-                      ),
-                    ),
-                    Box(height: 15, width: 0),
-                    Text(
-                      "Subscribe to our newsletter and be among the first to hear about new arrivals, sale, events and special offers.",
-                      style: GoogleFonts.dmSans(
-                        textStyle: const TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black,
-                            fontSize: 14,
-                            letterSpacing: 0.4),
-                      ),
-                    ),
-                    Box(height: 12, width: 0),
-                    Container(
-                      height: 40,
-                      child: Row(
-                        children: [
-                          Text(
-                            "    Enter your E-mail Address",
-                            style: GoogleFonts.dmSans(
-                              textStyle: const TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.black45,
-                                  fontSize: 14,
-                                  letterSpacing: 0.4),
-                            ),
-                          ),
-                        ],
-                      ),
-                      width: 300,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black)),
-                    ),
-                    Box(height: 10, width: 0),
-                    Container(
-                      height: 40,
-                      width: 200,
-                      child: Center(
-                        child: Text(
-                          "SUBSCRIBE",
-                          style: GoogleFonts.dmSans(
-                            textStyle: const TextStyle(
-                                fontWeight: FontWeight.normal,
-                                color: Colors.white,
-                                fontSize: 14,
-                                letterSpacing: 2),
-                          ),
-                        ),
-                      ),
-                      decoration: BoxDecoration(
-                          color: Color.fromRGBO(204, 191, 171, 1),
-                          border: Border.all(
-                              color: Color.fromRGBO(204, 191, 171, 1))),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                width: 140,
-                height: 400,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "ASSISTANCE",
-                      style: GoogleFonts.dmSans(
-                        textStyle: const TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black,
-                            fontSize: 14,
-                            letterSpacing: 2),
-                      ),
-                    ),
-                    Box(height: 15, width: 0),
-                    Text(
-                      "FAQ's",
-                      style: GoogleFonts.dmSans(
-                        textStyle: const TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black,
-                            fontSize: 14,
-                            letterSpacing: 0.4),
-                      ),
-                    ),
-                    Box(height: 8, width: 0),
-                    Text(
-                      "Privacy Policy",
-                      style: GoogleFonts.dmSans(
-                        textStyle: const TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black,
-                            fontSize: 14,
-                            letterSpacing: 0.4),
-                      ),
-                    ),
-                    Box(height: 8, width: 0),
-                    Text(
-                      "Shipping Policy",
-                      style: GoogleFonts.dmSans(
-                        textStyle: const TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black,
-                            fontSize: 14,
-                            letterSpacing: 0.4),
-                      ),
-                    ),
-                    Box(height: 8, width: 0),
-                    Text(
-                      "Track your order",
-                      style: GoogleFonts.dmSans(
-                        textStyle: const TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black,
-                            fontSize: 14,
-                            letterSpacing: 0.4),
-                      ),
-                    ),
-                    Box(height: 8, width: 0),
-                    Text(
-                      "Exchange policy",
-                      style: GoogleFonts.dmSans(
-                        textStyle: const TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black,
-                            fontSize: 14,
-                            letterSpacing: 0.4),
-                      ),
-                    ),
-                    Box(height: 8, width: 0),
-                  ],
-                ),
-              ),
+              // Container(
+              //   width: 400,
+              //   height: 400,
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       Text(
+              //         "CONNECT WITH US",
+              //         style: GoogleFonts.dmSans(
+              //           textStyle: const TextStyle(
+              //               fontWeight: FontWeight.normal,
+              //               color: Colors.black,
+              //               fontSize: 14,
+              //               letterSpacing: 2),
+              //         ),
+              //       ),
+              //       Box(height: 15, width: 0),
+              //       Text(
+              //         "Subscribe to our newsletter and be among the first to hear about new arrivals, sale, events and special offers.",
+              //         style: GoogleFonts.dmSans(
+              //           textStyle: const TextStyle(
+              //               fontWeight: FontWeight.normal,
+              //               color: Colors.black,
+              //               fontSize: 14,
+              //               letterSpacing: 0.4),
+              //         ),
+              //       ),
+              //       Box(height: 12, width: 0),
+              //       Container(
+              //         height: 40,
+              //         child: Row(
+              //           children: [
+              //             Text(
+              //               "    Enter your E-mail Address",
+              //               style: GoogleFonts.dmSans(
+              //                 textStyle: const TextStyle(
+              //                     fontWeight: FontWeight.normal,
+              //                     color: Colors.black45,
+              //                     fontSize: 14,
+              //                     letterSpacing: 0.4),
+              //               ),
+              //             ),
+              //           ],
+              //         ),
+              //         width: 300,
+              //         decoration: BoxDecoration(
+              //             border: Border.all(color: Colors.black)),
+              //       ),
+              //       Box(height: 10, width: 0),
+              //       Container(
+              //         height: 40,
+              //         width: 200,
+              //         child: Center(
+              //           child: Text(
+              //             "SUBSCRIBE",
+              //             style: GoogleFonts.dmSans(
+              //               textStyle: const TextStyle(
+              //                   fontWeight: FontWeight.normal,
+              //                   color: Colors.white,
+              //                   fontSize: 14,
+              //                   letterSpacing: 2),
+              //             ),
+              //           ),
+              //         ),
+              //         decoration: BoxDecoration(
+              //             color: Color.fromRGBO(204, 191, 171, 1),
+              //             border: Border.all(
+              //                 color: Color.fromRGBO(204, 191, 171, 1))),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // Container(
+              //   width: 140,
+              //   height: 400,
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       Text(
+              //         "ASSISTANCE",
+              //         style: GoogleFonts.dmSans(
+              //           textStyle: const TextStyle(
+              //               fontWeight: FontWeight.normal,
+              //               color: Colors.black,
+              //               fontSize: 14,
+              //               letterSpacing: 2),
+              //         ),
+              //       ),
+              //       Box(height: 15, width: 0),
+                   
+              //       Text(
+              //         "Privacy Policy",
+              //         style: GoogleFonts.dmSans(
+              //           textStyle: const TextStyle(
+              //               fontWeight: FontWeight.normal,
+              //               color: Colors.black,
+              //               fontSize: 14,
+              //               letterSpacing: 0.4),
+              //         ),
+              //       ),
+              //       Box(height: 8, width: 0),
+              //       Text(
+              //         "Shipping Policy",
+              //         style: GoogleFonts.dmSans(
+              //           textStyle: const TextStyle(
+              //               fontWeight: FontWeight.normal,
+              //               color: Colors.black,
+              //               fontSize: 14,
+              //               letterSpacing: 0.4),
+              //         ),
+              //       ),
+              //       Box(height: 8, width: 0),
+              //       Text(
+              //         "Track your order",
+              //         style: GoogleFonts.dmSans(
+              //           textStyle: const TextStyle(
+              //               fontWeight: FontWeight.normal,
+              //               color: Colors.black,
+              //               fontSize: 14,
+              //               letterSpacing: 0.4),
+              //         ),
+              //       ),
+              //       Box(height: 8, width: 0),
+              //       Text(
+              //         "Exchange policy",
+              //         style: GoogleFonts.dmSans(
+              //           textStyle: const TextStyle(
+              //               fontWeight: FontWeight.normal,
+              //               color: Colors.black,
+              //               fontSize: 14,
+              //               letterSpacing: 0.4),
+              //         ),
+              //       ),
+              //       Box(height: 8, width: 0),
+              //     ],
+              //   ),
+              // ),
             ],
           ),
         ],
@@ -556,7 +547,7 @@ class TitleWebBox extends StatelessWidget {
                     const Box(height: 0, width: 20),
                     GestureDetector(
                         onTap: () {
-                          MRANDMRS.sharedprefs!.getString("uid") == null
+                          MRANDMRS.sharedprefs!.getString("uid") == ""
                               ? Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -868,7 +859,7 @@ class TitleAdminWebBox extends StatelessWidget {
                     const Box(height: 0, width: 20),
                     GestureDetector(
                         onTap: () {
-                          MRANDMRS.sharedprefs!.getString("uid") == null
+                          MRANDMRS.sharedprefs!.getString("uid") == ""
                               ? Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -937,7 +928,7 @@ class TitleAdminWebBox extends StatelessWidget {
                   hoverChild: Column(
                     children: [
                       Text(
-                        "Orders",
+                        "Track Your Orders",
                         style: GoogleFonts.dmSans(
                           textStyle: const TextStyle(
                               fontWeight: FontWeight.normal,
@@ -959,7 +950,7 @@ class TitleAdminWebBox extends StatelessWidget {
                     print("HELLO");
                   },
                   child: Text(
-                    "Orders",
+                    "Track your Orders",
                     style: GoogleFonts.dmSans(
                       textStyle: const TextStyle(
                           fontWeight: FontWeight.normal,

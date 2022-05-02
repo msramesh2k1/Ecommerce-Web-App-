@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:motion_toast/motion_toast.dart';
 import 'package:motion_toast/resources/arrays.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mrandmrs_ecom_webapp/ErrorAlert.dart';
+import 'package:mrandmrs_ecom_webapp/users/views/ErrorAlert.dart';
 import 'package:mrandmrs_ecom_webapp/users/views/Helper.dart';
 import 'package:mrandmrs_ecom_webapp/HomeScreenWidgets/HomeWidgets.dart';
 import 'package:mrandmrs_ecom_webapp/users/views/accountscree.dart';
 import 'package:mrandmrs_ecom_webapp/users/views/loginpage.dart';
 import 'package:mrandmrs_ecom_webapp/users/views/registerpage.dart';
 import 'package:mrandmrs_ecom_webapp/Widgets/Custom_Widgets.dart';
-import 'package:mrandmrs_ecom_webapp/constants.dart';
+import '../../../constants.dart';
 
 
 class ForgetPassword extends StatefulWidget {

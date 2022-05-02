@@ -1,7 +1,15 @@
 <!DOCTYPE html><html>
 <meta name="viewport" content="width=device-width">
-<head><title>RazorPay Web Payment</title></head>
-<body>
+<head><title>RazorPay Web Payment</title>
+  
+
+
+
+</head>
+<body  style="background-color:white;">
+
+   <img src="dp.png" alt="Flowers in Chania">
+   
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
    // const queryString = windows.location.search;
@@ -13,20 +21,21 @@
        var options = {
          "key": "rzp_test_fLo6QLFO60RWDp",
           "amount": 50000, "currency": "INR",
-          "name": "esj",
-          "description": "Test Transaction",
-          "image": "https://example.com/your_logo",
+          "name": "Ramesh M S",
+          "description": "E Payment Protal",
+          "image": "https://i.ibb.co/4RcfSPq/344.png",
           "handler": function (response){
 
-            //  window.parent.postMessage("SUCCESS","*");
-             window.parent.postMessage(response,"*")      //2 
-             alert(response.razorpay_payment_id);
-             alert(response.razorpay_order_id);
-             alert(response.razorpay_signature)    
+             window.parent.postMessage(response,"*");
+             
+            //  window.parent.postMessage(response,"*")      //2 
+            //  alert(response.razorpay_payment_id);
+            //  alert(response.razorpay_order_id);
+            //  alert(response.razorpay_signature)    
           },    
           "prefill": {        
-             "name": "Gaurav Kumar",        
-             "email": "gaurav.kumar@example.com",
+             "name": "Ramesh M S",        
+             "email": "msramesh2k1@gmail.com",
              "contact": "7010862331"   
            },   
            "notes": {        
@@ -35,17 +44,23 @@
           "theme": {
              "color": "#3399cc"    
           },
+          'external': {
+        'wallets': ['paytm']
+      },
           "modal": {
             "ondismiss": function(){
+               
                window.parent.postMessage("MODAL_CLOSED","*");   //3
             }
           }
        };
 
+       
        var rzp1 = new Razorpay(options);
        window.onload = function(e){  //1  
           rzp1.open();
-          e.preventDefault();
+         //  print("RAZORPAY OPENED");
+       e.preventDefault();
        }
 
      </script>

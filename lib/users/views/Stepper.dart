@@ -2,9 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mrandmrs_ecom_webapp/Detailer.dart';
-import 'package:mrandmrs_ecom_webapp/detailproductscreen.dart';
+import 'package:mrandmrs_ecom_webapp/helpers/responsive_widget.dart';
+import 'package:mrandmrs_ecom_webapp/users/views/Detailer.dart';
+import 'package:mrandmrs_ecom_webapp/users/views/detailproductscreen.dart';
 import 'package:mrandmrs_ecom_webapp/razorpay.dart';
+import 'package:mrandmrs_ecom_webapp/users/views/dummy.dart';
+import 'package:razorpay_web/razorpay_web.dart';
 import '../../UiFake.dart' if (dart.library.html) 'dart:ui' as ui;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,6 +21,7 @@ import '../../CartPage.dart';
 import 'Helper.dart';
 import '../../Orders.dart';
 import '../../controllers/cart_controller.dart';
+import 'HomePage.dart';
 
 class StepperCart extends StatefulWidget {
   @override
@@ -30,6 +34,7 @@ class _StepperCartState extends State<StepperCart> {
   int quanity = 1;
   int cartno = 0;
   int? addressid;
+  Razorpay? _razorpay;
   final razorpay = Razorpay();
   @override
   void initState() {
@@ -85,9 +90,11 @@ class _StepperCartState extends State<StepperCart> {
     });
     // TODO: implement initState
     super.initState();
-    razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, externalWallet);
-    razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, paySuccess);
-    razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, payError);
+    _razorpay = Razorpay();
+    _razorpay!.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay!.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay!.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+
     FirebaseFirestore.instance
         .collection("users")
         .doc(MRANDMRS.sharedprefs!.getString("uid"))
@@ -123,8 +130,6 @@ class _StepperCartState extends State<StepperCart> {
   }
 
   void paySuccess(PaymentSuccessResponse response) {
-    print("IOiooioiooioioi" + response.paymentId.toString());
-
     FirebaseFirestore.instance
         .collection("users")
         .doc(MRANDMRS.sharedprefs!.getString("uid"))
@@ -200,18 +205,16 @@ class _StepperCartState extends State<StepperCart> {
   }
 
   getPayment() {
-    var option = {
-      'wallets': ['paytm'],
-      "key": "rzp_test_ecJqQLLxH72kvE",
-      "amount": totalAmount.toDouble() * 100,
-      "name": "Ramesh M S",
-      "prefill": {"contact": "", "email": ""}
+    var options = {
+      'key': 'rzp_test_NNbwJ9tmM0fbxj',
+      'amount': (totalAmount.toDouble() * 100),
+      'name': 'Ramesh M S',
+      'description': 'E - Ration Payment portal',
+      'prefill': {'contact': '9344768931', 'email': 'msramesh2k1@gmail.com'},
+      'external': {
+        'wallets': ['paytm']
+      }
     };
-    try {
-      razorpay.open(option);
-    } catch (e) {
-      print("ERROR IS " + e.toString());
-    }
   }
 
   int cartvalueno() {
@@ -240,6 +243,56 @@ class _StepperCartState extends State<StepperCart> {
       });
     });
     return addressid;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay!.clear();
+  }
+
+  void openCheckout() async {
+    var options = {
+      'key': 'rzp_test_NNbwJ9tmM0fbxj',
+      'amount': (totalAmount * 100),
+      'name': 'Ramesh M S',
+      'description': 'E - Ration Payment portal',
+      'prefill': {'contact': '9344768931', 'email': 'msramesh2k1@gmail.com'},
+      'external': {
+        'wallets': ['paytm']
+      }
+    };
+
+    try {
+      _razorpay!.open(options);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    print(response.orderId);
+    print(response.paymentId);
+    print(response.signature);
+    Fluttertoast.showToast(msg: "SUCCESS: " + response.paymentId.toString());
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (BuildContext context) {
+      return HomeScreen();
+    }));
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    Fluttertoast.showToast(
+      msg: "ERROR: " +
+          response.code.toString() +
+          " - " +
+          response.message.toString(),
+    );
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    Fluttertoast.showToast(
+        msg: "EXTERNAL_WALLET: " + response.walletName.toString());
   }
 
   @override
@@ -290,788 +343,2268 @@ class _StepperCartState extends State<StepperCart> {
       //   backgroundColor: Colors.white,
       //   elevation: 0,
       // ),
-      body: SingleChildScrollView(
-        child: Container(
-          child: Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: NetworkImage(
-                          "https://i.ibb.co/RYSwJQn/Untitled-1920-900-px.png",
+      body: ResponsiveWidget(
+        mobile: SingleChildScrollView(
+          child: Container(
+            child: Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: NetworkImage(
+                            "https://i.ibb.co/RYSwJQn/Untitled-1920-900-px.png",
+                          ),
+                          fit: BoxFit.cover)),
+                  height: 170,
+                  width: MediaQuery.of(context).size.width,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Mr & Mrs",
+                          style: GoogleFonts.novaSlim(
+                            textStyle: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 25,
+                                letterSpacing: 0),
+                          ),
                         ),
-                        fit: BoxFit.cover)),
-                height: 170,
-                width: MediaQuery.of(context).size.width,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                        Text(
+                          "Design Wood Works",
+                          style: GoogleFonts.openSans(
+                            textStyle: const TextStyle(
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white,
+                                fontSize: 11,
+                                letterSpacing: 1),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0, left: 20),
+                  child: Row(
                     children: [
                       Text(
-                        "Mr & Mrs",
-                        style: GoogleFonts.novaSlim(
-                          textStyle: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              fontSize: 25,
-                              letterSpacing: 0),
-                        ),
-                      ),
-                      Text(
-                        "Design Wood Works",
+                        "cart",
                         style: GoogleFonts.openSans(
                           textStyle: const TextStyle(
                               fontWeight: FontWeight.normal,
-                              color: Colors.white,
-                              fontSize: 11,
+                              color: Colors.black,
+                              fontSize: 13,
+                              letterSpacing: 1),
+                        ),
+                      ),
+                      Text(
+                        " > ",
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 13,
+                              letterSpacing: 1),
+                        ),
+                      ),
+                      Text(
+                        "Information",
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 13,
+                              letterSpacing: 1),
+                        ),
+                      ),
+                      Text(
+                        " > ",
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 13,
+                              letterSpacing: 1),
+                        ),
+                      ),
+                      Text(
+                        "Shipping",
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 13,
+                              letterSpacing: 1),
+                        ),
+                      ),
+                      Text(
+                        " > ",
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 13,
+                              letterSpacing: 1),
+                        ),
+                      ),
+                      Text(
+                        "Payment",
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 13,
                               letterSpacing: 1),
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Contact Information",
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              fontSize: 16,
+                              letterSpacing: 0.5),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Text(
+                        MRANDMRS.sharedprefs!.getString("name").toString(),
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 15,
+                              letterSpacing: 0.5),
+                        ),
+                      ),
+                      Text(
+                        MRANDMRS.sharedprefs!.getString("email").toString(),
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 15,
+                              letterSpacing: 0.5),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Container(
+                        height: 900,
+                        width: 500,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                              height: cartno * 180,
+                              width: 500,
+                              color: Colors.grey[100],
+                              child: StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection("users")
+                                      .doc(MRANDMRS.sharedprefs!
+                                          .getString("uid"))
+                                      .collection("cart")
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return Center(
+                                          child: CircularProgressIndicator());
+                                    } else {
+                                      return Scrollbar(
+                                        isAlwaysShown: true,
+                                        thickness: 10,
 
-              Padding(
-                padding: const EdgeInsets.only(top: 20.0, left: 20),
-                child: Row(
-                  children: [
-                    Text(
-                      "cart",
-                      style: GoogleFonts.openSans(
-                        textStyle: const TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black,
-                            fontSize: 13,
-                            letterSpacing: 1),
-                      ),
-                    ),
-                    Text(
-                      " > ",
-                      style: GoogleFonts.openSans(
-                        textStyle: const TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black,
-                            fontSize: 13,
-                            letterSpacing: 1),
-                      ),
-                    ),
-                    Text(
-                      "Information",
-                      style: GoogleFonts.openSans(
-                        textStyle: const TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black,
-                            fontSize: 13,
-                            letterSpacing: 1),
-                      ),
-                    ),
-                    Text(
-                      " > ",
-                      style: GoogleFonts.openSans(
-                        textStyle: const TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black,
-                            fontSize: 13,
-                            letterSpacing: 1),
-                      ),
-                    ),
-                    Text(
-                      "Shipping",
-                      style: GoogleFonts.openSans(
-                        textStyle: const TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black,
-                            fontSize: 13,
-                            letterSpacing: 1),
-                      ),
-                    ),
-                    Text(
-                      " > ",
-                      style: GoogleFonts.openSans(
-                        textStyle: const TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black,
-                            fontSize: 13,
-                            letterSpacing: 1),
-                      ),
-                    ),
-                    Text(
-                      "Payment",
-                      style: GoogleFonts.openSans(
-                        textStyle: const TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black,
-                            fontSize: 13,
-                            letterSpacing: 1),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Row(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Contact Information",
-                          style: GoogleFonts.openSans(
-                            textStyle: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                fontSize: 16,
-                                letterSpacing: 0.5),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Text(
-                          MRANDMRS.sharedprefs!.getString("name").toString(),
-                          style: GoogleFonts.openSans(
-                            textStyle: const TextStyle(
-                                fontWeight: FontWeight.normal,
-                                color: Colors.black,
-                                fontSize: 15,
-                                letterSpacing: 0.5),
-                          ),
-                        ),
-                        Text(
-                          MRANDMRS.sharedprefs!.getString("email").toString(),
-                          style: GoogleFonts.openSans(
-                            textStyle: const TextStyle(
-                                fontWeight: FontWeight.normal,
-                                color: Colors.black,
-                                fontSize: 15,
-                                letterSpacing: 0.5),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Container(
-                          height: 500,
-                          width: 600,
-                          child: Address(),
-                          color: Colors.brown[50],
-                        ),
-                      ],
-                    ),
-                    Spacer(),
-                    Container(
-                      height: 900,
-                      width: 500,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: cartno * 180,
-                            width: 500,
-                            color: Colors.grey[100],
-                            child: StreamBuilder<QuerySnapshot>(
-                                stream: FirebaseFirestore.instance
-                                    .collection("users")
-                                    .doc(MRANDMRS.sharedprefs!.getString("uid"))
-                                    .collection("cart")
-                                    .snapshots(),
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return Center(
-                                      child: Text(
-                                        'Loading...',
-                                      ),
-                                    );
-                                  } else {
-                                    return Scrollbar(
-                                      isAlwaysShown: true,
-                                      thickness: 10,
-
-                                      //  controller: _s`crollController,
-                                      child: ListView.builder(
-                                          physics:
-                                              NeverScrollableScrollPhysics(),
-                                          // gridDelegate:
-                                          //     SliverGridDelegateWithFixedCrossAxisCount(
-                                          //         crossAxisCount: 1),
-                                          //   controller: _scrollController,
-                                          itemCount: snapshot.data!.docs.length,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return GestureDetector(
-                                              onTap: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            DetailProductScreens(
-                                                                queryDocumentSnapshot:
-                                                                    snapshot.data!
-                                                                            .docs[
-                                                                        index])));
-                                              },
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(10.0),
-                                                child: Container(
-                                                  height: 120,
-                                                  decoration: BoxDecoration(
-                                                    // color: Color.fromRGBO(
-                                                    //     230, 224, 215, 1),
-                                                    border: Border.all(
-                                                        color: Colors.black12),
-                                                  ),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceEvenly,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                left: 15.0,
-                                                                top: 15,
-                                                                bottom: 15),
-                                                        child: Expanded(
-                                                          child: Container(
-                                                            height: 100,
-                                                            width: 100,
-                                                            decoration: BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            0),
-                                                                color: Colors
-                                                                    .grey[200],
-                                                                image: DecorationImage(
-                                                                    image: NetworkImage(snapshot
-                                                                            .data!
-                                                                            .docs[index]
-                                                                        [
-                                                                        'mainimage']),
-                                                                    fit: BoxFit
-                                                                        .cover)),
+                                        //  controller: _s`crollController,
+                                        child: ListView.builder(
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                            // gridDelegate:
+                                            //     SliverGridDelegateWithFixedCrossAxisCount(
+                                            //         crossAxisCount: 1),
+                                            //   controller: _scrollController,
+                                            itemCount:
+                                                snapshot.data!.docs.length,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              DetailProductScreen(
+                                                                  queryDocumentSnapshot: snapshot
+                                                                          .data!
+                                                                          .docs[
+                                                                      index])));
+                                                },
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      10.0),
+                                                  child: Container(
+                                                    height: 120,
+                                                    decoration: BoxDecoration(
+                                                      // color: Color.fromRGBO(
+                                                      //     230, 224, 215, 1),
+                                                      border: Border.all(
+                                                          color:
+                                                              Colors.black12),
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceEvenly,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  left: 15.0,
+                                                                  top: 15,
+                                                                  bottom: 15),
+                                                          child: Expanded(
+                                                            child: Container(
+                                                              height: 100,
+                                                              width: 100,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              0),
+                                                                  color: Colors
+                                                                          .grey[
+                                                                      200],
+                                                                  image: DecorationImage(
+                                                                      image: NetworkImage(snapshot
+                                                                              .data!
+                                                                              .docs[index]
+                                                                          [
+                                                                          'mainimage']),
+                                                                      fit: BoxFit
+                                                                          .cover)),
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 40,
-                                                      ),
-                                                      Container(
-                                                        width: 200,
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
+                                                        SizedBox(
+                                                          width: 40,
+                                                        ),
+                                                        Container(
+                                                          width: 200,
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              SizedBox(
+                                                                height: 16,
+                                                              ),
+                                                              Text(
+                                                                snapshot
+                                                                    .data!
+                                                                    .docs[index]
+                                                                        ['name']
+                                                                    .toString(),
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .dmSans(
+                                                                  textStyle: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontSize:
+                                                                          13,
+                                                                      letterSpacing:
+                                                                          1),
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                height: 4,
+                                                              ),
+                                                              Text(
+                                                                snapshot.data!.docs[
+                                                                            index]
+                                                                        [
+                                                                        'length'] +
+                                                                    " * " +
+                                                                    snapshot.data!
+                                                                            .docs[index]
+                                                                        [
+                                                                        'width'] +
+                                                                    "  CM",
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .dmSans(
+                                                                  textStyle: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400,
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontSize:
+                                                                          12,
+                                                                      letterSpacing:
+                                                                          0),
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                height: 4,
+                                                              ),
+                                                              Container(
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceEvenly,
+                                                                  children: [
+                                                                    Center(
+                                                                      child:
+                                                                          Text(
+                                                                        "QUANTITY : ",
+                                                                        style: GoogleFonts
+                                                                            .lato(
+                                                                          textStyle: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: Colors.black54,
+                                                                              fontSize: 10,
+                                                                              letterSpacing: 1),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    SizedBox(
+                                                                      height: 5,
+                                                                    ),
+                                                                    Container(
+                                                                        child:
+                                                                            Center(
+                                                                          child:
+                                                                              Text(
+                                                                            snapshot.data!.docs[index]['quanity'].toString(),
+                                                                            style:
+                                                                                GoogleFonts.lato(
+                                                                              textStyle: TextStyle(fontWeight: FontWeight.w900, color: Colors.black, fontSize: 12, letterSpacing: 1),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        decoration: BoxDecoration(
+                                                                            color: Colors.grey[
+                                                                                300],
+                                                                            borderRadius: BorderRadius.circular(
+                                                                                2)),
+                                                                        height:
+                                                                            20,
+                                                                        width:
+                                                                            20),
+                                                                    SizedBox(
+                                                                      height: 5,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                height: 30,
+                                                                width: 110,
+                                                                decoration: BoxDecoration(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            5)),
+                                                              ),
+                                                              // SizedBox(
+                                                              //   height: 0,
+                                                              // ),
+
+                                                              // Padding(
+                                                              //   padding: const EdgeInsets
+                                                              //           .only(
+                                                              //       top: 8.0),
+                                                              //   child: Center(
+                                                              //     child: Text(
+                                                              //       "Wood : " +
+                                                              //           snapshot
+                                                              //               .data!
+                                                              //               .docs[index]['wood'],
+                                                              //       style: GoogleFonts
+                                                              //           .josefinSans(
+                                                              //         textStyle: TextStyle(
+                                                              //             fontWeight: FontWeight
+                                                              //                 .w700,
+                                                              //             color: Colors
+                                                              //                 .black54,
+                                                              //             fontSize:
+                                                              //                 14,
+                                                              //             letterSpacing:
+                                                              //                 0),
+                                                              //       ),
+                                                              //     ),
+                                                              //   ),
+                                                              // ),
+                                                              // SizedBox(
+                                                              //   height: 10,
+                                                              // ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        Spacer(),
+                                                        Column(
                                                           mainAxisAlignment:
                                                               MainAxisAlignment
                                                                   .center,
                                                           children: [
-                                                            SizedBox(
-                                                              height: 16,
-                                                            ),
-                                                            Text(
-                                                              snapshot
-                                                                  .data!
-                                                                  .docs[index]
-                                                                      ['name']
-                                                                  .toString(),
-                                                              style: GoogleFonts
-                                                                  .dmSans(
-                                                                textStyle: TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontSize:
-                                                                        13,
-                                                                    letterSpacing:
-                                                                        1),
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      right:
+                                                                          10.0,
+                                                                      top: 0),
+                                                              child: Text(
+                                                                "₹ " +
+                                                                    snapshot
+                                                                        .data!
+                                                                        .docs[
+                                                                            index]
+                                                                            [
+                                                                            'oprice']
+                                                                        .toString(),
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .lato(
+                                                                  textStyle: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontSize:
+                                                                          15,
+                                                                      letterSpacing:
+                                                                          0),
+                                                                ),
                                                               ),
                                                             ),
-                                                            SizedBox(
-                                                              height: 4,
-                                                            ),
-                                                            Text(
-                                                              snapshot.data!.docs[
-                                                                          index]
-                                                                      [
-                                                                      'length'] +
-                                                                  " * " +
-                                                                  snapshot.data!
-                                                                              .docs[
-                                                                          index]
-                                                                      [
-                                                                      'width'] +
-                                                                  "  CM",
-                                                              style: GoogleFonts
-                                                                  .dmSans(
-                                                                textStyle: TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400,
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontSize:
-                                                                        12,
-                                                                    letterSpacing:
-                                                                        0),
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: 4,
-                                                            ),
-                                                            Container(
-                                                              child: Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceEvenly,
-                                                                children: [
-                                                                  Center(
-                                                                    child: Text(
-                                                                      "QUANTITY : ",
-                                                                      style: GoogleFonts
-                                                                          .lato(
-                                                                        textStyle: TextStyle(
-                                                                            fontWeight: FontWeight
-                                                                                .w700,
-                                                                            color: Colors
-                                                                                .black54,
-                                                                            fontSize:
-                                                                                10,
-                                                                            letterSpacing:
-                                                                                1),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                  Container(
-                                                                      child:
-                                                                          Center(
-                                                                        child:
-                                                                            Text(
-                                                                          snapshot
-                                                                              .data!
-                                                                              .docs[index]['quanity']
-                                                                              .toString(),
-                                                                          style:
-                                                                              GoogleFonts.lato(
-                                                                            textStyle: TextStyle(
-                                                                                fontWeight: FontWeight.w900,
-                                                                                color: Colors.black,
-                                                                                fontSize: 12,
-                                                                                letterSpacing: 1),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      decoration: BoxDecoration(
-                                                                          color: Colors.grey[
-                                                                              300],
-                                                                          borderRadius: BorderRadius.circular(
-                                                                              2)),
-                                                                      height:
-                                                                          20,
-                                                                      width:
-                                                                          20),
-                                                                  SizedBox(
-                                                                    height: 5,
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              height: 30,
-                                                              width: 110,
-                                                              decoration: BoxDecoration(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5)),
-                                                            ),
-                                                            // SizedBox(
-                                                            //   height: 0,
-                                                            // ),
-
-                                                            // Padding(
-                                                            //   padding: const EdgeInsets
-                                                            //           .only(
-                                                            //       top: 8.0),
-                                                            //   child: Center(
-                                                            //     child: Text(
-                                                            //       "Wood : " +
-                                                            //           snapshot
-                                                            //               .data!
-                                                            //               .docs[index]['wood'],
-                                                            //       style: GoogleFonts
-                                                            //           .josefinSans(
-                                                            //         textStyle: TextStyle(
-                                                            //             fontWeight: FontWeight
-                                                            //                 .w700,
-                                                            //             color: Colors
-                                                            //                 .black54,
-                                                            //             fontSize:
-                                                            //                 14,
-                                                            //             letterSpacing:
-                                                            //                 0),
-                                                            //       ),
-                                                            //     ),
-                                                            //   ),
-                                                            // ),
-                                                            // SizedBox(
-                                                            //   height: 10,
-                                                            // ),
                                                           ],
                                                         ),
-                                                      ),
-                                                      Spacer(),
-                                                      Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    right: 10.0,
-                                                                    top: 0),
-                                                            child: Text(
-                                                              "₹ " +
-                                                                  snapshot
-                                                                      .data!
-                                                                      .docs[
-                                                                          index]
-                                                                          [
-                                                                          'oprice']
-                                                                      .toString(),
-                                                              style: GoogleFonts
-                                                                  .lato(
-                                                                textStyle: TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontSize:
-                                                                        15,
-                                                                    letterSpacing:
-                                                                        0),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      SizedBox(
-                                                        width: 30,
-                                                      )
-                                                    ],
+                                                        SizedBox(
+                                                          width: 30,
+                                                        )
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            );
-                                          }),
-                                    );
-                                  }
-                                }),
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              height: 0.5,
-                              width: 400,
-                              color: Colors.black,
+                                              );
+                                            }),
+                                      );
+                                    }
+                                  }),
                             ),
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                height: 0.5,
+                                width: 400,
+                                color: Colors.black,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 100,
+                                  ),
+                                  Text(
+                                    "SubTotal",
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          letterSpacing: 1),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    "₹ " + totalAmount.toString(),
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          letterSpacing: 1),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 100,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 100,
+                                  ),
+                                  Text(
+                                    "Shipping",
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          letterSpacing: 1),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    "Free",
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          letterSpacing: 1),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 100,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 100,
+                                  ),
+                                  Text(
+                                    "Taxes",
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          letterSpacing: 1),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    "₹ " + "453",
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          letterSpacing: 1),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 100,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                height: 0.5,
+                                width: 400,
+                                color: Colors.black,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Row(
                               children: [
                                 SizedBox(
                                   width: 100,
                                 ),
                                 Text(
-                                  "SubTotal",
-                                  style: GoogleFonts.lato(
+                                  "Total",
+                                  style: GoogleFonts.dmSans(
                                     textStyle: TextStyle(
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.bold,
                                         color: Colors.black,
-                                        fontSize: 12,
+                                        fontSize: 17,
                                         letterSpacing: 1),
                                   ),
                                 ),
                                 Spacer(),
                                 Text(
                                   "₹ " + totalAmount.toString(),
-                                  style: GoogleFonts.lato(
-                                    textStyle: TextStyle(
-                                        fontWeight: FontWeight.w900,
-                                        color: Colors.black,
-                                        fontSize: 12,
-                                        letterSpacing: 1),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 100,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: 100,
-                                ),
-                                Text(
-                                  "Shipping",
-                                  style: GoogleFonts.lato(
-                                    textStyle: TextStyle(
-                                        fontWeight: FontWeight.w900,
-                                        color: Colors.black,
-                                        fontSize: 12,
-                                        letterSpacing: 1),
-                                  ),
-                                ),
-                                Spacer(),
-                                Text(
-                                  "Free",
-                                  style: GoogleFonts.lato(
-                                    textStyle: TextStyle(
-                                        fontWeight: FontWeight.w900,
-                                        color: Colors.black,
-                                        fontSize: 12,
-                                        letterSpacing: 1),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 100,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: 100,
-                                ),
-                                Text(
-                                  "Taxes",
-                                  style: GoogleFonts.lato(
-                                    textStyle: TextStyle(
-                                        fontWeight: FontWeight.w900,
-                                        color: Colors.black,
-                                        fontSize: 12,
-                                        letterSpacing: 1),
-                                  ),
-                                ),
-                                Spacer(),
-                                Text(
-                                  "₹ " + "453",
-                                  style: GoogleFonts.lato(
-                                    textStyle: TextStyle(
-                                        fontWeight: FontWeight.w900,
-                                        color: Colors.black,
-                                        fontSize: 12,
-                                        letterSpacing: 1),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 100,
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              height: 0.5,
-                              width: 400,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: 100,
-                              ),
-                              Text(
-                                "Total",
-                                style: GoogleFonts.dmSans(
-                                  textStyle: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                      fontSize: 17,
-                                      letterSpacing: 1),
-                                ),
-                              ),
-                              Spacer(),
-                              Text(
-                                "₹ " + totalAmount.toString(),
-                                style: GoogleFonts.dmSans(
-                                  textStyle: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                      fontSize: 17,
-                                      letterSpacing: 1),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 100,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 70,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) => RazorPayWeb(
-                                          id: addressid, price: totalAmount)));
-                            },
-                            child: Container(
-                              height: 70,
-                              width: 300,
-                              color: Colors.black,
-                              child: Center(
-                                child: Text(
-                                  "CHECKOUT",
                                   style: GoogleFonts.dmSans(
                                     textStyle: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                                        color: Colors.black,
                                         fontSize: 17,
-                                        letterSpacing: 2),
+                                        letterSpacing: 1),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 100,
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 70,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                // getPayment();
+
+                                // openCheckout();
+
+                                print("hello");
+
+                                // Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //         builder: (_) => RazorPayWeb(
+                                //             id: addressid,
+                                //             price: totalAmount)));
+                              },
+                              child: Container(
+                                height: 70,
+                                width: 300,
+                                color: Colors.black,
+                                child: Center(
+                                  child: Text(
+                                    "CHECKOUT",
+                                    style: GoogleFonts.dmSans(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          fontSize: 17,
+                                          letterSpacing: 2),
+                                    ),
                                   ),
                                 ),
                               ),
+                            )
+                          ],
+                        ),
+                        color: Colors.green,
+                      ),
+                      Container(
+                        height: 500,
+                        width: 600,
+                        child: Address(),
+                        color: Colors.brown[50],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        tab: SingleChildScrollView(
+          child: Container(
+            child: Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: NetworkImage(
+                            "https://i.ibb.co/RYSwJQn/Untitled-1920-900-px.png",
+                          ),
+                          fit: BoxFit.cover)),
+                  height: 170,
+                  width: MediaQuery.of(context).size.width,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Mr & Mrs",
+                          style: GoogleFonts.novaSlim(
+                            textStyle: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 25,
+                                letterSpacing: 0),
+                          ),
+                        ),
+                        Text(
+                          "Design Wood Works",
+                          style: GoogleFonts.openSans(
+                            textStyle: const TextStyle(
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white,
+                                fontSize: 11,
+                                letterSpacing: 1),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0, left: 20),
+                  child: Row(
+                    children: [
+                      Text(
+                        "cart",
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 13,
+                              letterSpacing: 1),
+                        ),
+                      ),
+                      Text(
+                        " > ",
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 13,
+                              letterSpacing: 1),
+                        ),
+                      ),
+                      Text(
+                        "Information",
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 13,
+                              letterSpacing: 1),
+                        ),
+                      ),
+                      Text(
+                        " > ",
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 13,
+                              letterSpacing: 1),
+                        ),
+                      ),
+                      Text(
+                        "Shipping",
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 13,
+                              letterSpacing: 1),
+                        ),
+                      ),
+                      Text(
+                        " > ",
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 13,
+                              letterSpacing: 1),
+                        ),
+                      ),
+                      Text(
+                        "Payment",
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 13,
+                              letterSpacing: 1),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Contact Information",
+                            style: GoogleFonts.openSans(
+                              textStyle: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  letterSpacing: 0.5),
                             ),
-                          )
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Text(
+                            MRANDMRS.sharedprefs!.getString("name").toString(),
+                            style: GoogleFonts.openSans(
+                              textStyle: const TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.black,
+                                  fontSize: 15,
+                                  letterSpacing: 0.5),
+                            ),
+                          ),
+                          Text(
+                            MRANDMRS.sharedprefs!.getString("email").toString(),
+                            style: GoogleFonts.openSans(
+                              textStyle: const TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.black,
+                                  fontSize: 15,
+                                  letterSpacing: 0.5),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Container(
+                            height: 500,
+                            width: 600,
+                            child: Address(),
+                            color: Colors.brown[50],
+                          ),
                         ],
                       ),
-                    ),
-                    Spacer()
-                  ],
+                      Spacer(),
+                      Container(
+                        height: 900,
+                        width: 500,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                              height: cartno * 180,
+                              width: 500,
+                              color: Colors.grey[100],
+                              child: StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection("users")
+                                      .doc(MRANDMRS.sharedprefs!
+                                          .getString("uid"))
+                                      .collection("cart")
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return Center(
+                                          child: CircularProgressIndicator());
+                                    } else {
+                                      return Scrollbar(
+                                        isAlwaysShown: true,
+                                        thickness: 10,
+
+                                        //  controller: _s`crollController,
+                                        child: ListView.builder(
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                            // gridDelegate:
+                                            //     SliverGridDelegateWithFixedCrossAxisCount(
+                                            //         crossAxisCount: 1),
+                                            //   controller: _scrollController,
+                                            itemCount:
+                                                snapshot.data!.docs.length,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              DetailProductScreen(
+                                                                  queryDocumentSnapshot: snapshot
+                                                                          .data!
+                                                                          .docs[
+                                                                      index])));
+                                                },
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      10.0),
+                                                  child: Container(
+                                                    height: 120,
+                                                    decoration: BoxDecoration(
+                                                      // color: Color.fromRGBO(
+                                                      //     230, 224, 215, 1),
+                                                      border: Border.all(
+                                                          color:
+                                                              Colors.black12),
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceEvenly,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  left: 15.0,
+                                                                  top: 15,
+                                                                  bottom: 15),
+                                                          child: Expanded(
+                                                            child: Container(
+                                                              height: 100,
+                                                              width: 100,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              0),
+                                                                  color: Colors
+                                                                          .grey[
+                                                                      200],
+                                                                  image: DecorationImage(
+                                                                      image: NetworkImage(snapshot
+                                                                              .data!
+                                                                              .docs[index]
+                                                                          [
+                                                                          'mainimage']),
+                                                                      fit: BoxFit
+                                                                          .cover)),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 40,
+                                                        ),
+                                                        Container(
+                                                          width: 200,
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              SizedBox(
+                                                                height: 16,
+                                                              ),
+                                                              Text(
+                                                                snapshot
+                                                                    .data!
+                                                                    .docs[index]
+                                                                        ['name']
+                                                                    .toString(),
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .dmSans(
+                                                                  textStyle: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontSize:
+                                                                          13,
+                                                                      letterSpacing:
+                                                                          1),
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                height: 4,
+                                                              ),
+                                                              Text(
+                                                                snapshot.data!.docs[
+                                                                            index]
+                                                                        [
+                                                                        'length'] +
+                                                                    " * " +
+                                                                    snapshot.data!
+                                                                            .docs[index]
+                                                                        [
+                                                                        'width'] +
+                                                                    "  CM",
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .dmSans(
+                                                                  textStyle: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400,
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontSize:
+                                                                          12,
+                                                                      letterSpacing:
+                                                                          0),
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                height: 4,
+                                                              ),
+                                                              Container(
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceEvenly,
+                                                                  children: [
+                                                                    Center(
+                                                                      child:
+                                                                          Text(
+                                                                        "QUANTITY : ",
+                                                                        style: GoogleFonts
+                                                                            .lato(
+                                                                          textStyle: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: Colors.black54,
+                                                                              fontSize: 10,
+                                                                              letterSpacing: 1),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    SizedBox(
+                                                                      height: 5,
+                                                                    ),
+                                                                    Container(
+                                                                        child:
+                                                                            Center(
+                                                                          child:
+                                                                              Text(
+                                                                            snapshot.data!.docs[index]['quanity'].toString(),
+                                                                            style:
+                                                                                GoogleFonts.lato(
+                                                                              textStyle: TextStyle(fontWeight: FontWeight.w900, color: Colors.black, fontSize: 12, letterSpacing: 1),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        decoration: BoxDecoration(
+                                                                            color: Colors.grey[
+                                                                                300],
+                                                                            borderRadius: BorderRadius.circular(
+                                                                                2)),
+                                                                        height:
+                                                                            20,
+                                                                        width:
+                                                                            20),
+                                                                    SizedBox(
+                                                                      height: 5,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                height: 30,
+                                                                width: 110,
+                                                                decoration: BoxDecoration(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            5)),
+                                                              ),
+                                                              // SizedBox(
+                                                              //   height: 0,
+                                                              // ),
+
+                                                              // Padding(
+                                                              //   padding: const EdgeInsets
+                                                              //           .only(
+                                                              //       top: 8.0),
+                                                              //   child: Center(
+                                                              //     child: Text(
+                                                              //       "Wood : " +
+                                                              //           snapshot
+                                                              //               .data!
+                                                              //               .docs[index]['wood'],
+                                                              //       style: GoogleFonts
+                                                              //           .josefinSans(
+                                                              //         textStyle: TextStyle(
+                                                              //             fontWeight: FontWeight
+                                                              //                 .w700,
+                                                              //             color: Colors
+                                                              //                 .black54,
+                                                              //             fontSize:
+                                                              //                 14,
+                                                              //             letterSpacing:
+                                                              //                 0),
+                                                              //       ),
+                                                              //     ),
+                                                              //   ),
+                                                              // ),
+                                                              // SizedBox(
+                                                              //   height: 10,
+                                                              // ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        Spacer(),
+                                                        Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      right:
+                                                                          10.0,
+                                                                      top: 0),
+                                                              child: Text(
+                                                                "₹ " +
+                                                                    snapshot
+                                                                        .data!
+                                                                        .docs[
+                                                                            index]
+                                                                            [
+                                                                            'oprice']
+                                                                        .toString(),
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .lato(
+                                                                  textStyle: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontSize:
+                                                                          15,
+                                                                      letterSpacing:
+                                                                          0),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(
+                                                          width: 30,
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }),
+                                      );
+                                    }
+                                  }),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                height: 0.5,
+                                width: 400,
+                                color: Colors.black,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 100,
+                                  ),
+                                  Text(
+                                    "SubTotal",
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          letterSpacing: 1),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    "₹ " + totalAmount.toString(),
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          letterSpacing: 1),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 100,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 100,
+                                  ),
+                                  Text(
+                                    "Shipping",
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          letterSpacing: 1),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    "Free",
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          letterSpacing: 1),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 100,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 100,
+                                  ),
+                                  Text(
+                                    "Taxes",
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          letterSpacing: 1),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    "₹ " + "453",
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          letterSpacing: 1),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 100,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                height: 0.5,
+                                width: 400,
+                                color: Colors.black,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: 100,
+                                ),
+                                Text(
+                                  "Total",
+                                  style: GoogleFonts.dmSans(
+                                    textStyle: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                        fontSize: 17,
+                                        letterSpacing: 1),
+                                  ),
+                                ),
+                                Spacer(),
+                                Text(
+                                  "₹ " + totalAmount.toString(),
+                                  style: GoogleFonts.dmSans(
+                                    textStyle: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                        fontSize: 17,
+                                        letterSpacing: 1),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 100,
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 70,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                getPayment();
+
+                                // openCheckout();
+
+                                // print("hello");
+
+                                // Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //         builder: (_) => RazorPayWeb(
+                                //             id: addressid,
+                                //             price: totalAmount)));
+                              },
+                              child: Container(
+                                height: 70,
+                                width: 300,
+                                color: Colors.black,
+                                child: Center(
+                                  child: Text(
+                                    "CHECKOUT",
+                                    style: GoogleFonts.dmSans(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          fontSize: 17,
+                                          letterSpacing: 2),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      Spacer()
+                    ],
+                  ),
                 ),
-              ),
 
-              // Expanded(
-              //   child: Padding(
-              //     padding: const EdgeInsets.only(top: 30.0, bottom: 30),
-              //     child: Theme(
-              //       data: ThemeData(
-              //           colorScheme: ColorScheme.light(
-              //               primary: Colors.brown[900]!.withOpacity(0.4)),
-              //           accentColor: Colors.grey,
-              //           primaryColor: Colors.grey[600],
-              //           buttonColor: Colors.brown),
-              //       child: Stepper(
-              //         currentStep: this.currentStep,
-              //         steps: steps,
-              //         type: StepperType.horizontal,
-              //         onStepContinue: () {
-              //           print(currentStep);
-              //           if (currentStep == 0) {
-              //             if (cartno == 0) {
-              //               context.read<CartController>().cartvaluefinder();
-              //               print("ITEMS ADDED SUCCESSFULLY");
-              //             } else {
-              //               setState(() {
-              //                 print(totalAmount);
-              //                 currentStep = currentStep + 1;
-              //               });
-              //             }
-              //           } else if (currentStep == 1) {
-              //             if (id == "") {
-              //               print("SELECT ADDRESS");
-              //             } else {
-              //               setState(() {
-              //                 currentStep = currentStep + 1;
-              //               });
-              //             }
-              //             print("Hi Hlo");
-              //             print("addresser" + id);
-              //           } else if (currentStep == 2) {
-              //             getPayment();
-              //           }
-              //           // print(currentStep);
+                // Expanded(
+                //   child: Padding(
+                //     padding: const EdgeInsets.only(top: 30.0, bottom: 30),
+                //     child: Theme(
+                //       data: ThemeData(
+                //           colorScheme: ColorScheme.light(
+                //               primary: Colors.brown[900]!.withOpacity(0.4)),
+                //           accentColor: Colors.grey,
+                //           primaryColor: Colors.grey[600],
+                //           buttonColor: Colors.brown),
+                //       child: Stepper(
+                //         currentStep: this.currentStep,
+                //         steps: steps,
+                //         type: StepperType.horizontal,
+                //         onStepContinue: () {
+                //           print(currentStep);
+                //           if (currentStep == 0) {
+                //             if (cartno == 0) {
+                //               context.read<CartController>().cartvaluefinder();
+                //               print("ITEMS ADDED SUCCESSFULLY");
+                //             } else {
+                //               setState(() {
+                //                 print(totalAmount);
+                //                 currentStep = currentStep + 1;
+                //               });
+                //             }
+                //           } else if (currentStep == 1) {
+                //             if (id == "") {
+                //               print("SELECT ADDRESS");
+                //             } else {
+                //               setState(() {
+                //                 currentStep = currentStep + 1;
+                //               });
+                //             }
+                //             print("Hi Hlo");
+                //             print("addresser" + id);
+                //           } else if (currentStep == 2) {
+                //             getPayment();
+                //           }
+                //           // print(currentStep);
 
-              //           // setState(() {
-              //           //   if (currentStep < steps.length - 1) {
-              //           //     if (currentStep == 0) {
-              //           //       if (cartno == 0) {
-              //           //         Toast.show("Add Items to Place Order", context,
-              //           //             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-              //           //         currentStep = currentStep;
-              //           //       } else {
-              //           //         currentStep = currentStep + 1;
-              //           //       }
-              //           //     } else if (currentStep == 1) {
-              //           //       if (addressid == 0) {
-              //           //         Toast.show("Add Address", context,
-              //           //             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-              //           //             setState(() {
-              //           //               //  currentStep = currentStep - 2;
-              //           //             });
+                //           // setState(() {
+                //           //   if (currentStep < steps.length - 1) {
+                //           //     if (currentStep == 0) {
+                //           //       if (cartno == 0) {
+                //           //         Toast.show("Add Items to Place Order", context,
+                //           //             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                //           //         currentStep = currentStep;
+                //           //       } else {
+                //           //         currentStep = currentStep + 1;
+                //           //       }
+                //           //     } else if (currentStep == 1) {
+                //           //       if (addressid == 0) {
+                //           //         Toast.show("Add Address", context,
+                //           //             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                //           //             setState(() {
+                //           //               //  currentStep = currentStep - 2;
+                //           //             });
 
-              //           //       } else {
-              //           //         currentStep = currentStep + 1;
-              //           //       }
-              //           //     }
-              //           //   } else {
-              //           //     currentStep = 0;
-              //           //   }
-              //           // });
-              //         },
-              //         onStepCancel: () {
-              //           print(currentStep);
-              //           setState(() {
-              //             if (currentStep == 0) {
-              //               Navigator.pop(context);
-              //             } else if (currentStep > 0) {
-              //               currentStep = currentStep - 1;
-              //             } else {
-              //               currentStep = 0;
-              //             }
-              //           });
-              //         },
-              //         onStepTapped: (step) {
-              //           setState(() {
-              //             currentStep = step;
-              //           });
-              //         },
-              //       ),
-              //     ),
-              //   ),
-              //   ),
-            ],
+                //           //       } else {
+                //           //         currentStep = currentStep + 1;
+                //           //       }
+                //           //     }
+                //           //   } else {
+                //           //     currentStep = 0;
+                //           //   }
+                //           // });
+                //         },
+                //         onStepCancel: () {
+                //           print(currentStep);
+                //           setState(() {
+                //             if (currentStep == 0) {
+                //               Navigator.pop(context);
+                //             } else if (currentStep > 0) {
+                //               currentStep = currentStep - 1;
+                //             } else {
+                //               currentStep = 0;
+                //             }
+                //           });
+                //         },
+                //         onStepTapped: (step) {
+                //           setState(() {
+                //             currentStep = step;
+                //           });
+                //         },
+                //       ),
+                //     ),
+                //   ),
+                //   ),
+              ],
+            ),
+          ),
+        ),
+        desktop: SingleChildScrollView(
+          child: Container(
+            child: Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: NetworkImage(
+                            "https://i.ibb.co/RYSwJQn/Untitled-1920-900-px.png",
+                          ),
+                          fit: BoxFit.cover)),
+                  height: 170,
+                  width: MediaQuery.of(context).size.width,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Mr & Mrs",
+                          style: GoogleFonts.novaSlim(
+                            textStyle: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 25,
+                                letterSpacing: 0),
+                          ),
+                        ),
+                        Text(
+                          "Design Wood Works",
+                          style: GoogleFonts.openSans(
+                            textStyle: const TextStyle(
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white,
+                                fontSize: 11,
+                                letterSpacing: 1),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0, left: 20),
+                  child: Row(
+                    children: [
+                      Text(
+                        "cart",
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 13,
+                              letterSpacing: 1),
+                        ),
+                      ),
+                      Text(
+                        " > ",
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 13,
+                              letterSpacing: 1),
+                        ),
+                      ),
+                      Text(
+                        "Information",
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 13,
+                              letterSpacing: 1),
+                        ),
+                      ),
+                      Text(
+                        " > ",
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 13,
+                              letterSpacing: 1),
+                        ),
+                      ),
+                      Text(
+                        "Shipping",
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 13,
+                              letterSpacing: 1),
+                        ),
+                      ),
+                      Text(
+                        " > ",
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 13,
+                              letterSpacing: 1),
+                        ),
+                      ),
+                      Text(
+                        "Payment",
+                        style: GoogleFonts.openSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 13,
+                              letterSpacing: 1),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Contact Information",
+                            style: GoogleFonts.openSans(
+                              textStyle: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  letterSpacing: 0.5),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Text(
+                            MRANDMRS.sharedprefs!.getString("name").toString(),
+                            style: GoogleFonts.openSans(
+                              textStyle: const TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.black,
+                                  fontSize: 15,
+                                  letterSpacing: 0.5),
+                            ),
+                          ),
+                          Text(
+                            MRANDMRS.sharedprefs!.getString("email").toString(),
+                            style: GoogleFonts.openSans(
+                              textStyle: const TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.black,
+                                  fontSize: 15,
+                                  letterSpacing: 0.5),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Container(
+                            height: 500,
+                            width: 600,
+                            child: Address(),
+                            color: Colors.brown[50],
+                          ),
+                        ],
+                      ),
+                      Spacer(),
+                      Container(
+                        height: 900,
+                        width: 500,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                              height: cartno * 180,
+                              width: 500,
+                              color: Colors.grey[100],
+                              child: StreamBuilder<QuerySnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection("users")
+                                      .doc(MRANDMRS.sharedprefs!
+                                          .getString("uid"))
+                                      .collection("cart")
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return Center(
+                                          child: CircularProgressIndicator());
+                                    } else {
+                                      return Scrollbar(
+                                        isAlwaysShown: true,
+                                        thickness: 10,
+
+                                        //  controller: _s`crollController,
+                                        child: ListView.builder(
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                            // gridDelegate:
+                                            //     SliverGridDelegateWithFixedCrossAxisCount(
+                                            //         crossAxisCount: 1),
+                                            //   controller: _scrollController,
+                                            itemCount:
+                                                snapshot.data!.docs.length,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              DetailProductScreen(
+                                                                  queryDocumentSnapshot: snapshot
+                                                                          .data!
+                                                                          .docs[
+                                                                      index])));
+                                                },
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      10.0),
+                                                  child: Container(
+                                                    height: 120,
+                                                    decoration: BoxDecoration(
+                                                      // color: Color.fromRGBO(
+                                                      //     230, 224, 215, 1),
+                                                      border: Border.all(
+                                                          color:
+                                                              Colors.black12),
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceEvenly,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  left: 15.0,
+                                                                  top: 15,
+                                                                  bottom: 15),
+                                                          child: Expanded(
+                                                            child: Container(
+                                                              height: 100,
+                                                              width: 100,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              0),
+                                                                  color: Colors
+                                                                          .grey[
+                                                                      200],
+                                                                  image: DecorationImage(
+                                                                      image: NetworkImage(snapshot
+                                                                              .data!
+                                                                              .docs[index]
+                                                                          [
+                                                                          'mainimage']),
+                                                                      fit: BoxFit
+                                                                          .cover)),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 40,
+                                                        ),
+                                                        Container(
+                                                          width: 200,
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              SizedBox(
+                                                                height: 16,
+                                                              ),
+                                                              Text(
+                                                                snapshot
+                                                                    .data!
+                                                                    .docs[index]
+                                                                        ['name']
+                                                                    .toString(),
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .dmSans(
+                                                                  textStyle: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontSize:
+                                                                          13,
+                                                                      letterSpacing:
+                                                                          1),
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                height: 4,
+                                                              ),
+                                                              Text(
+                                                                snapshot.data!.docs[
+                                                                            index]
+                                                                        [
+                                                                        'length'] +
+                                                                    " * " +
+                                                                    snapshot.data!
+                                                                            .docs[index]
+                                                                        [
+                                                                        'width'] +
+                                                                    "  CM",
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .dmSans(
+                                                                  textStyle: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400,
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontSize:
+                                                                          12,
+                                                                      letterSpacing:
+                                                                          0),
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                height: 4,
+                                                              ),
+                                                              Container(
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceEvenly,
+                                                                  children: [
+                                                                    Center(
+                                                                      child:
+                                                                          Text(
+                                                                        "QUANTITY : ",
+                                                                        style: GoogleFonts
+                                                                            .lato(
+                                                                          textStyle: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              color: Colors.black54,
+                                                                              fontSize: 10,
+                                                                              letterSpacing: 1),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    SizedBox(
+                                                                      height: 5,
+                                                                    ),
+                                                                    Container(
+                                                                        child:
+                                                                            Center(
+                                                                          child:
+                                                                              Text(
+                                                                            snapshot.data!.docs[index]['quanity'].toString(),
+                                                                            style:
+                                                                                GoogleFonts.lato(
+                                                                              textStyle: TextStyle(fontWeight: FontWeight.w900, color: Colors.black, fontSize: 12, letterSpacing: 1),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        decoration: BoxDecoration(
+                                                                            color: Colors.grey[
+                                                                                300],
+                                                                            borderRadius: BorderRadius.circular(
+                                                                                2)),
+                                                                        height:
+                                                                            20,
+                                                                        width:
+                                                                            20),
+                                                                    SizedBox(
+                                                                      height: 5,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                height: 30,
+                                                                width: 110,
+                                                                decoration: BoxDecoration(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            5)),
+                                                              ),
+                                                              // SizedBox(
+                                                              //   height: 0,
+                                                              // ),
+
+                                                              // Padding(
+                                                              //   padding: const EdgeInsets
+                                                              //           .only(
+                                                              //       top: 8.0),
+                                                              //   child: Center(
+                                                              //     child: Text(
+                                                              //       "Wood : " +
+                                                              //           snapshot
+                                                              //               .data!
+                                                              //               .docs[index]['wood'],
+                                                              //       style: GoogleFonts
+                                                              //           .josefinSans(
+                                                              //         textStyle: TextStyle(
+                                                              //             fontWeight: FontWeight
+                                                              //                 .w700,
+                                                              //             color: Colors
+                                                              //                 .black54,
+                                                              //             fontSize:
+                                                              //                 14,
+                                                              //             letterSpacing:
+                                                              //                 0),
+                                                              //       ),
+                                                              //     ),
+                                                              //   ),
+                                                              // ),
+                                                              // SizedBox(
+                                                              //   height: 10,
+                                                              // ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        Spacer(),
+                                                        Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      right:
+                                                                          10.0,
+                                                                      top: 0),
+                                                              child: Text(
+                                                                "₹ " +
+                                                                    snapshot
+                                                                        .data!
+                                                                        .docs[
+                                                                            index]
+                                                                            [
+                                                                            'oprice']
+                                                                        .toString(),
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .lato(
+                                                                  textStyle: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w700,
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontSize:
+                                                                          15,
+                                                                      letterSpacing:
+                                                                          0),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(
+                                                          width: 30,
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }),
+                                      );
+                                    }
+                                  }),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                height: 0.5,
+                                width: 400,
+                                color: Colors.black,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 100,
+                                  ),
+                                  Text(
+                                    "SubTotal",
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          letterSpacing: 1),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    "₹ " + totalAmount.toString(),
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          letterSpacing: 1),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 100,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 100,
+                                  ),
+                                  Text(
+                                    "Shipping",
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          letterSpacing: 1),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    "Free",
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          letterSpacing: 1),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 100,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 100,
+                                  ),
+                                  Text(
+                                    "Taxes",
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          letterSpacing: 1),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    "₹ " + "453",
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          letterSpacing: 1),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 100,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                height: 0.5,
+                                width: 400,
+                                color: Colors.black,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: 100,
+                                ),
+                                Text(
+                                  "Total",
+                                  style: GoogleFonts.dmSans(
+                                    textStyle: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                        fontSize: 17,
+                                        letterSpacing: 1),
+                                  ),
+                                ),
+                                Spacer(),
+                                Text(
+                                  "₹ " + totalAmount.toString(),
+                                  style: GoogleFonts.dmSans(
+                                    textStyle: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                        fontSize: 17,
+                                        letterSpacing: 1),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 100,
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 70,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                //  getPayment();
+
+                                // openCheckout();
+                                // print("hello");
+
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (_) => DummyPay(
+                                            )));
+                               
+                                // Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //         builder: (_) => RazorPayWeb(
+                                //             id: addressid, price: totalAmount)));
+                              },
+                              child: Container(
+                                height: 70,
+                                width: 300,
+                                color: Colors.black,
+                                child: Center(
+                                  child: Text(
+                                    "CHECKOUTss",
+                                    style: GoogleFonts.dmSans(
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          fontSize: 17,
+                                          letterSpacing: 2),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      Spacer()
+                    ],
+                  ),
+                ),
+
+                // Expanded(
+                //   child: Padding(
+                //     padding: const EdgeInsets.only(top: 30.0, bottom: 30),
+                //     child: Theme(
+                //       data: ThemeData(
+                //           colorScheme: ColorScheme.light(
+                //               primary: Colors.brown[900]!.withOpacity(0.4)),
+                //           accentColor: Colors.grey,
+                //           primaryColor: Colors.grey[600],
+                //           buttonColor: Colors.brown),
+                //       child: Stepper(
+                //         currentStep: this.currentStep,
+                //         steps: steps,
+                //         type: StepperType.horizontal,
+                //         onStepContinue: () {
+                //           print(currentStep);
+                //           if (currentStep == 0) {
+                //             if (cartno == 0) {
+                //               context.read<CartController>().cartvaluefinder();
+                //               print("ITEMS ADDED SUCCESSFULLY");
+                //             } else {
+                //               setState(() {
+                //                 print(totalAmount);
+                //                 currentStep = currentStep + 1;
+                //               });
+                //             }
+                //           } else if (currentStep == 1) {
+                //             if (id == "") {
+                //               print("SELECT ADDRESS");
+                //             } else {
+                //               setState(() {
+                //                 currentStep = currentStep + 1;
+                //               });
+                //             }
+                //             print("Hi Hlo");
+                //             print("addresser" + id);
+                //           } else if (currentStep == 2) {
+                //             getPayment();
+                //           }
+                //           // print(currentStep);
+
+                //           // setState(() {
+                //           //   if (currentStep < steps.length - 1) {
+                //           //     if (currentStep == 0) {
+                //           //       if (cartno == 0) {
+                //           //         Toast.show("Add Items to Place Order", context,
+                //           //             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                //           //         currentStep = currentStep;
+                //           //       } else {
+                //           //         currentStep = currentStep + 1;
+                //           //       }
+                //           //     } else if (currentStep == 1) {
+                //           //       if (addressid == 0) {
+                //           //         Toast.show("Add Address", context,
+                //           //             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                //           //             setState(() {
+                //           //               //  currentStep = currentStep - 2;
+                //           //             });
+
+                //           //       } else {
+                //           //         currentStep = currentStep + 1;
+                //           //       }
+                //           //     }
+                //           //   } else {
+                //           //     currentStep = 0;
+                //           //   }
+                //           // });
+                //         },
+                //         onStepCancel: () {
+                //           print(currentStep);
+                //           setState(() {
+                //             if (currentStep == 0) {
+                //               Navigator.pop(context);
+                //             } else if (currentStep > 0) {
+                //               currentStep = currentStep - 1;
+                //             } else {
+                //               currentStep = 0;
+                //             }
+                //           });
+                //         },
+                //         onStepTapped: (step) {
+                //           setState(() {
+                //             currentStep = step;
+                //           });
+                //         },
+                //       ),
+                //     ),
+                //   ),
+                //   ),
+              ],
+            ),
           ),
         ),
       ),

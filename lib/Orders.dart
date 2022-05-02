@@ -731,8 +731,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mrandmrs_ecom_webapp/helpers/mobilewidgets.dart';
+import 'package:mrandmrs_ecom_webapp/helpers/responsive_widget.dart';
 
-import 'DetailedScreen.dart';
 import 'users/views/Helper.dart';
 
 class Orders extends StatefulWidget {
@@ -743,45 +743,38 @@ class Orders extends StatefulWidget {
 class _ordersState extends State<Orders> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              TopMovileNotifyBlackBox(),
-              MobileTitleWebBox(),
-              Container(
+    return Scaffold(
+      body: ResponsiveWidget(
+        mobile: Column(
+          children: [
+            TopMovileNotifyBlackBox(),
+            MobileTitleWebBox(),
+            Expanded(
+              child: Container(
                 color: Colors.white,
-                // height: 1050,
+                width: MediaQuery.of(context).size.width,
                 child: StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance
                         .collection("orders")
-                        .doc(MRANDMRS.sharedprefs!.getString("uid"))
+                        .doc("psYJNWWwMbMspr0RDMsF0QivWNu1")
                         .collection("items")
                         .snapshots(),
                     builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return Text(
-                          'Loading',
-                        );
-                      } else {
-                        return Scrollbar(
-                          //   isAlwaysShown: true,
-                          //
-                          //
-
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 20.0, right: 20, bottom: 20),
-                            child: Container(
-                              child: ListView.builder(
+                      return !snapshot.hasData
+                          ? Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 10.0, right: 10, bottom: 10, top: 0),
+                              child: GridView.builder(
                                   primary: false,
                                   shrinkWrap: true,
                                   // physics: NeverScrollableScrollPhysics(),
                                   scrollDirection: Axis.vertical,
-                                  //                     gridDelegate:
-                                  // SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 11),
-
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 1),
                                   itemCount: snapshot.data!.docs.length,
                                   itemBuilder:
                                       (BuildContext context, int index) {
@@ -796,97 +789,134 @@ class _ordersState extends State<Orders> {
                                         //             )));
                                       },
                                       child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
+                                        padding: const EdgeInsets.all(4.0),
                                         child: Container(
+                                          height: 600,
                                           decoration: BoxDecoration(
-                                              color: Colors.teal[200]!
-                                                  .withOpacity(0.4),
+                                              color: Color.fromRGBO(
+                                                  204, 191, 171, 0.5),
                                               borderRadius:
                                                   BorderRadius.circular(5)),
                                           child: Column(
                                             children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 8.0,
-                                                    right: 8.0,
-                                                    top: 8.0),
-                                                child: Container(
-                                                  color: Colors.grey[200],
-                                                  height: 20,
-                                                  child: Center(
-                                                    child: Text(
-                                                      "ORDER ID : " +
-                                                          snapshot.data!
-                                                              .docs[index]["id"]
-                                                              .toUpperCase(),
-                                                      style: GoogleFonts.lato(
-                                                        textStyle: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: Colors.black,
-                                                            fontSize: 12,
-                                                            letterSpacing: 3),
-                                                      ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  CircleAvatar(
+                                                    radius: 5,
+                                                    backgroundColor:
+                                                        Colors.white,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Text(
+                                                    "Order Id : " +
+                                                        snapshot.data!
+                                                            .docs[index]["id"]
+                                                            .toUpperCase(),
+                                                    style: GoogleFonts.lato(
+                                                      textStyle: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          color: Colors.black,
+                                                          fontSize: 13,
+                                                          letterSpacing: 0),
                                                     ),
                                                   ),
-                                                ),
+                                                ],
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 8.0, right: 8.0),
-                                                child: Container(
-                                                  color: Colors.grey[200],
-                                                  height: 20,
-                                                  child: Center(
-                                                    child: Text(
-                                                      "ORDER STATUS : " +
-                                                          snapshot
-                                                              .data!
-                                                              .docs[index]
-                                                                  ["status"]
-                                                              .toUpperCase(),
-                                                      style: GoogleFonts.lato(
-                                                        textStyle: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: Colors.black,
-                                                            fontSize: 12,
-                                                            letterSpacing: 3),
-                                                      ),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  CircleAvatar(
+                                                    radius: 5,
+                                                    backgroundColor:
+                                                        Colors.white,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Text(
+                                                    "Order Status : " +
+                                                        snapshot
+                                                            .data!
+                                                            .docs[index]
+                                                                ["status"]
+                                                            .toUpperCase(),
+                                                    style: GoogleFonts.lato(
+                                                      textStyle: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          color: Colors.black,
+                                                          fontSize: 13,
+                                                          letterSpacing: 0),
                                                     ),
                                                   ),
-                                                ),
+                                                ],
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 8.0, right: 8.0),
-                                                child: Container(
-                                                  color: Colors.grey[200],
-                                                  height: 20,
-                                                  // child: Center(
-                                                  //   child: Text("PAYMENT : "+
-                                                  //     snapshot.data.docs[index]["payment"]
-                                                  //         .toUpperCase(),
-                                                  //     style: GoogleFonts.lato(
-                                                  //       textStyle: TextStyle(
-                                                  //           fontWeight: FontWeight.w600,
-                                                  //           color: Colors.black,
-                                                  //           fontSize: 12,
-                                                  //           letterSpacing: 3),
-                                                  //     ),
-                                                  //   ),
-                                                  // ),
-                                                ),
+                                              SizedBox(
+                                                height: 5,
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 8.0,
-                                                    right: 8.0,
-                                                    top: 8,
-                                                    bottom: 0),
-                                                child: Container(
-                                                  child: StreamBuilder<
-                                                          QuerySnapshot>(
+                                              Row(
+                                                children: [
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  CircleAvatar(
+                                                    radius: 5,
+                                                    backgroundColor:
+                                                        Colors.white,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Text(
+                                                    "Payment Status : " +
+                                                        snapshot
+                                                            .data!
+                                                            .docs[index]
+                                                                ["payment"]
+                                                            .toUpperCase(),
+                                                    style: GoogleFonts.lato(
+                                                      textStyle: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          color: Colors.black,
+                                                          fontSize: 13,
+                                                          letterSpacing: 0),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  CircleAvatar(
+                                                    radius: 5,
+                                                    backgroundColor:
+                                                        Colors.white,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  StreamBuilder<QuerySnapshot>(
                                                       stream: FirebaseFirestore
                                                           .instance
                                                           .collection("users")
@@ -895,75 +925,125 @@ class _ordersState extends State<Orders> {
                                                               .getString("uid"))
                                                           .collection("address")
                                                           .where("id",
-                                                              isEqualTo: snapshot
-                                                                  .data!
-                                                                  .docs[index][
-                                                                      "address"]
-                                                                  .toString())
+                                                              isEqualTo:
+                                                                  "1647548953177"
+                                                                      .toString())
                                                           .snapshots(),
                                                       builder:
                                                           (context, snapshot) {
-                                                        return snapshot.hasData
-                                                            ? Center(
-                                                                child:
-                                                                    CircularProgressIndicator(),
-                                                              )
-                                                            : snapshot
-                                                                        .data!
-                                                                        .docs
-                                                                        .length ==
-                                                                    0
-                                                                ? SizedBox()
-                                                                : ListView
-                                                                    .builder(
-                                                                    physics:
-                                                                        NeverScrollableScrollPhysics(),
-                                                                    itemBuilder:
-                                                                        (context,
-                                                                            index) {
-                                                                      return Padding(
-                                                                        padding:
-                                                                            const EdgeInsets.only(top: 1.0),
-                                                                        child:
-                                                                            GestureDetector(
-                                                                          onTap:
-                                                                              () {},
-                                                                          child:
-                                                                              Container(
-                                                                            child:
-                                                                                Column(
-                                                                              mainAxisAlignment: MainAxisAlignment.start,
-                                                                              children: [
-                                                                                SizedBox(
-                                                                                  height: 6,
-                                                                                ),
-                                                                                Text(snapshot.data!.docs[index]['name'] + "  :  " + snapshot.data!.docs[index]['flatNumber'] + " " + snapshot.data!.docs[index]['street1'] + " , " + snapshot.data!.docs[index]['street2'], textAlign: TextAlign.center, style: GoogleFonts.josefinSans(textStyle: TextStyle(decoration: TextDecoration.none, color: Colors.black, fontSize: 11, fontWeight: FontWeight.normal))),
-                                                                                Text(snapshot.data!.docs[index]['city'] + "  -  " + snapshot.data!.docs[index]['state'] + "  -  " + " " + snapshot.data!.docs[index]['pincode'], textAlign: TextAlign.center, style: GoogleFonts.josefinSans(textStyle: TextStyle(decoration: TextDecoration.none, color: Colors.black, fontSize: 11, fontWeight: FontWeight.normal))),
-                                                                                Text(snapshot.data!.docs[index]['country'] + " / " + snapshot.data!.docs[index]['phoneNumber'], textAlign: TextAlign.center, style: GoogleFonts.josefinSans(textStyle: TextStyle(decoration: TextDecoration.none, color: Colors.black, fontSize: 11, fontWeight: FontWeight.normal))),
-                                                                              ],
-                                                                            ),
-                                                                            decoration:
-                                                                                BoxDecoration(
-                                                                              // border: Border.all(
-                                                                              //   color: Colors.black
-                                                                              //   ,width: 0.5
-                                                                              // ),
-                                                                              color: Colors.grey[200],
-                                                                              borderRadius: BorderRadius.circular(4),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      );
-                                                                    },
-                                                                    itemCount: snapshot
-                                                                        .data!
-                                                                        .docs
-                                                                        .length,
-                                                                    shrinkWrap:
-                                                                        true,
-                                                                  );
+                                                        return Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 0.0),
+                                                          child:
+                                                              GestureDetector(
+                                                            onTap: () {},
+                                                            child: Container(
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  SizedBox(
+                                                                    height: 2,
+                                                                  ),
+                                                                  Text(
+                                                                    snapshot
+                                                                                .data!.docs[0]
+                                                                            [
+                                                                            'name'] +
+                                                                        "  :  " +
+                                                                        snapshot.data!.docs[0]
+                                                                            [
+                                                                            'flatNumber'] +
+                                                                        " " +
+                                                                        snapshot.data!.docs[0]
+                                                                            [
+                                                                            'street1'] +
+                                                                        " , " +
+                                                                        snapshot
+                                                                            .data!
+                                                                            .docs[0]['city'] +
+                                                                        "  -  ",
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                    style:
+                                                                        GoogleFonts
+                                                                            .lato(
+                                                                      textStyle: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .w600,
+                                                                          color: Colors
+                                                                              .black,
+                                                                          fontSize:
+                                                                              13,
+                                                                          letterSpacing:
+                                                                              0),
+                                                                    ),
+                                                                  ),
+                                                                  Text(
+                                                                    snapshot.data!.docs[0]
+                                                                            [
+                                                                            'state'] +
+                                                                        "  -  " +
+                                                                        " " +
+                                                                        snapshot
+                                                                            .data!
+                                                                            .docs[0]['pincode'],
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .left,
+                                                                    style:
+                                                                        GoogleFonts
+                                                                            .lato(
+                                                                      textStyle: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .w600,
+                                                                          color: Colors
+                                                                              .black,
+                                                                          fontSize:
+                                                                              13,
+                                                                          letterSpacing:
+                                                                              0),
+                                                                    ),
+                                                                  ),
+                                                                  Text(
+                                                                    snapshot.data!.docs[0]
+                                                                            [
+                                                                            'country'] +
+                                                                        " | " +
+                                                                        snapshot
+                                                                            .data!
+                                                                            .docs[0]['phoneNumber'],
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .left,
+                                                                    style:
+                                                                        GoogleFonts
+                                                                            .lato(
+                                                                      textStyle: TextStyle(
+                                                                          fontWeight: FontWeight
+                                                                              .w600,
+                                                                          color: Colors
+                                                                              .black,
+                                                                          fontSize:
+                                                                              13,
+                                                                          letterSpacing:
+                                                                              0),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
                                                       }),
-                                                ),
+                                                ],
                                               ),
 
                                               Padding(
@@ -975,7 +1055,7 @@ class _ordersState extends State<Orders> {
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               5)),
-                                                  height: 500,
+                                                  height: 230,
                                                   child: Padding(
                                                     padding:
                                                         const EdgeInsets.only(
@@ -1012,17 +1092,15 @@ class _ordersState extends State<Orders> {
                                                                 .snapshots(),
                                                             builder: (context,
                                                                 snapshot) {
-                                                              if (snapshot
+                                                              if (!snapshot
                                                                   .hasData) {
-                                                                return Text(
-                                                                  'Loading',
-                                                                );
+                                                                return CircularProgressIndicator();
                                                               } else {
                                                                 return Scrollbar(
                                                                   //   isAlwaysShown: true,
 
                                                                   child: ListView.builder(
-                                                                      scrollDirection: Axis.vertical,
+                                                                      scrollDirection: Axis.horizontal,
                                                                       //                     gridDelegate:
                                                                       // SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 11),
 
@@ -1047,77 +1125,61 @@ class _ordersState extends State<Orders> {
                                                                                 Container(
                                                                               decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5)),
                                                                               height: 162,
-                                                                              child: Row(
+                                                                              child: Column(
+                                                                                crossAxisAlignment: CrossAxisAlignment.start,
                                                                                 children: [
                                                                                   SizedBox(
                                                                                     width: 10,
                                                                                   ),
                                                                                   Container(
-                                                                                    height: 100,
-                                                                                    width: 100,
+                                                                                    height: 135,
+                                                                                    width: 160,
                                                                                     decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.white, image: DecorationImage(image: NetworkImage(snapshot.data!.docs[index]['mainimage']), fit: BoxFit.cover)),
                                                                                   ),
                                                                                   SizedBox(
                                                                                     width: 10,
                                                                                   ),
-                                                                                  Column(
-                                                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                    children: [
-                                                                                      SizedBox(
-                                                                                        height: 20,
-                                                                                      ),
-                                                                                      Center(
-                                                                                        child: Text(
-                                                                                          snapshot.data!.docs[index]['name'].toUpperCase(),
-                                                                                          style: GoogleFonts.lato(
-                                                                                            textStyle: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 10, letterSpacing: 1),
-                                                                                          ),
+                                                                                  Padding(
+                                                                                    padding: const EdgeInsets.all(5.0),
+                                                                                    child: Column(
+                                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                      children: [
+                                                                                        SizedBox(
+                                                                                          height: 5,
                                                                                         ),
-                                                                                      ),
-                                                                                      Center(
-                                                                                        child: Text(
+                                                                                        Row(
+                                                                                          children: [
+                                                                                            Text(
+                                                                                              snapshot.data!.docs[index]['name'],
+                                                                                              style: GoogleFonts.dmSans(
+                                                                                                textStyle: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 12, letterSpacing: 0),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ],
+                                                                                        ),
+                                                                                        Text(
                                                                                           "QUANTITY : " + snapshot.data!.docs[index]['quanity'].toString(),
-                                                                                          style: GoogleFonts.lato(
-                                                                                            textStyle: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 10, letterSpacing: 1),
+                                                                                          style: GoogleFonts.dmSans(
+                                                                                            textStyle: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 12, letterSpacing: 0),
                                                                                           ),
                                                                                         ),
-                                                                                      ),
-                                                                                      Center(
-                                                                                        child: Text(
-                                                                                          snapshot.data!.docs[index]['price'].toString(),
-                                                                                          style: GoogleFonts.lato(
-                                                                                            textStyle: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 10, letterSpacing: 1),
+                                                                                        Text(
+                                                                                          "₹ " + snapshot.data!.docs[index]['oprice'].toString(),
+                                                                                          style: GoogleFonts.dmSans(
+                                                                                            textStyle: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 12, letterSpacing: 1),
                                                                                           ),
                                                                                         ),
-                                                                                      ),
-                                                                                      Center(
-                                                                                        child: Text(
-                                                                                          snapshot.data!.docs[index]['Description'].toUpperCase(),
-                                                                                          style: GoogleFonts.lato(
-                                                                                            textStyle: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 10, letterSpacing: 1),
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                      Center(
-                                                                                        child: Text(
+                                                                                        Text(
                                                                                           snapshot.data!.docs[index]['category'].toUpperCase(),
-                                                                                          style: GoogleFonts.lato(
-                                                                                            textStyle: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 10, letterSpacing: 1),
+                                                                                          style: GoogleFonts.dmSans(
+                                                                                            textStyle: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 12, letterSpacing: 1),
                                                                                           ),
                                                                                         ),
-                                                                                      ),
-                                                                                      Center(
-                                                                                        child: Text(
-                                                                                          snapshot.data!.docs[index]['wood'].toUpperCase(),
-                                                                                          style: GoogleFonts.lato(
-                                                                                            textStyle: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 10, letterSpacing: 1),
-                                                                                          ),
+                                                                                        SizedBox(
+                                                                                          height: 5,
                                                                                         ),
-                                                                                      ),
-                                                                                      SizedBox(
-                                                                                        height: 20,
-                                                                                      ),
-                                                                                    ],
+                                                                                      ],
+                                                                                    ),
                                                                                   ),
                                                                                 ],
                                                                               ),
@@ -1140,10 +1202,825 @@ class _ordersState extends State<Orders> {
                                       ),
                                     );
                                   }),
-                            ),
-                          ),
-                        );
-                      }
+                            );
+                    }),
+              ),
+            ),
+          ],
+        ),
+        tab: SingleChildScrollView(
+          child: Column(
+            children: [
+              TopMovileNotifyBlackBox(),
+              MobileTitleWebBox(),
+              Container(
+                color: Colors.white,
+                height: MediaQuery.of(context).size.width,
+                width: MediaQuery.of(context).size.width,
+                child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection("orders")
+                        .doc("psYJNWWwMbMspr0RDMsF0QivWNu1")
+                        .collection("items")
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      return !snapshot.hasData
+                          ? Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : Scrollbar(
+                              //   isAlwaysShown: true,
+                              //
+                              //
+
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10.0, right: 10, bottom: 10, top: 10),
+                                child: GridView.builder(
+                                    primary: false,
+                                    shrinkWrap: true,
+                                    // physics: NeverScrollableScrollPhysics(),
+                                    scrollDirection: Axis.vertical,
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 3),
+                                    itemCount: snapshot.data!.docs.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return GestureDetector(
+                                        onTap: () {
+                                          // Navigator.push(
+                                          //     context,
+                                          //     MaterialPageRoute(
+                                          //         builder: (context) => DetailScreen(
+                                          //               queryDocumentSnapshot:
+                                          //                   snapshot.data.docs[index],
+                                          //             )));
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Container(
+                                            height: 500,
+                                            decoration: BoxDecoration(
+                                                color: Colors.brown[200]!
+                                                    .withOpacity(0.4),
+                                                borderRadius:
+                                                    BorderRadius.circular(5)),
+                                            child: Column(
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 8.0,
+                                                          right: 8.0,
+                                                          top: 8.0),
+                                                  child: Container(
+                                                    color: Colors.grey[200],
+                                                    height: 20,
+                                                    child: Center(
+                                                      child: Text(
+                                                        "Order Id : " +
+                                                            snapshot
+                                                                .data!
+                                                                .docs[index]
+                                                                    ["id"]
+                                                                .toUpperCase(),
+                                                        style: GoogleFonts.lato(
+                                                          textStyle: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 12,
+                                                              letterSpacing: 1),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 8.0,
+                                                          right: 8.0),
+                                                  child: Container(
+                                                    color: Colors.grey[200],
+                                                    height: 20,
+                                                    child: Center(
+                                                      child: Text(
+                                                        "Order Status : " +
+                                                            snapshot
+                                                                .data!
+                                                                .docs[index]
+                                                                    ["status"]
+                                                                .toUpperCase(),
+                                                        style: GoogleFonts.lato(
+                                                          textStyle: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 12,
+                                                              letterSpacing: 1),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 8.0,
+                                                          right: 8.0),
+                                                  child: Container(
+                                                    color: Colors.grey[200],
+                                                    height: 20,
+                                                    child: Center(
+                                                      child: Text(
+                                                        "Payment Status : " +
+                                                            snapshot
+                                                                .data!
+                                                                .docs[index]
+                                                                    ["payment"]
+                                                                .toUpperCase(),
+                                                        style: GoogleFonts.lato(
+                                                          textStyle: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 12,
+                                                              letterSpacing: 1),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 8.0,
+                                                          right: 8.0,
+                                                          top: 0,
+                                                          bottom: 0),
+                                                  child: Container(
+                                                    child: StreamBuilder<
+                                                            QuerySnapshot>(
+                                                        stream: FirebaseFirestore
+                                                            .instance
+                                                            .collection("users")
+                                                            .doc(MRANDMRS
+                                                                .sharedprefs!
+                                                                .getString(
+                                                                    "uid"))
+                                                            .collection(
+                                                                "address")
+                                                            .where("id",
+                                                                isEqualTo:
+                                                                    "1647548953177"
+                                                                        .toString())
+                                                            .snapshots(),
+                                                        builder: (context,
+                                                            snapshot) {
+                                                          return !snapshot
+                                                                  .hasData
+                                                              ? Center(
+                                                                  child:
+                                                                      CircularProgressIndicator(),
+                                                                )
+                                                              : snapshot
+                                                                          .data!
+                                                                          .docs
+                                                                          .length ==
+                                                                      0
+                                                                  ? SizedBox()
+                                                                  : ListView
+                                                                      .builder(
+                                                                      physics:
+                                                                          NeverScrollableScrollPhysics(),
+                                                                      itemBuilder:
+                                                                          (context,
+                                                                              index) {
+                                                                        return Padding(
+                                                                          padding:
+                                                                              const EdgeInsets.only(top: 1.0),
+                                                                          child:
+                                                                              GestureDetector(
+                                                                            onTap:
+                                                                                () {},
+                                                                            child:
+                                                                                Container(
+                                                                              child: Column(
+                                                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                                                children: [
+                                                                                  SizedBox(
+                                                                                    height: 6,
+                                                                                  ),
+                                                                                  Text(snapshot.data!.docs[index]['name'] + "  :  " + snapshot.data!.docs[index]['flatNumber'] + " " + snapshot.data!.docs[index]['street1'] + " , ", textAlign: TextAlign.center, style: GoogleFonts.josefinSans(textStyle: TextStyle(decoration: TextDecoration.none, color: Colors.black, fontSize: 11, fontWeight: FontWeight.normal))),
+                                                                                  Text(snapshot.data!.docs[index]['city'] + "  -  " + snapshot.data!.docs[index]['state'] + "  -  " + " " + snapshot.data!.docs[index]['pincode'], textAlign: TextAlign.center, style: GoogleFonts.josefinSans(textStyle: TextStyle(decoration: TextDecoration.none, color: Colors.black, fontSize: 11, fontWeight: FontWeight.normal))),
+                                                                                  Text(snapshot.data!.docs[index]['country'] + " / " + snapshot.data!.docs[index]['phoneNumber'], textAlign: TextAlign.center, style: GoogleFonts.josefinSans(textStyle: TextStyle(decoration: TextDecoration.none, color: Colors.black, fontSize: 11, fontWeight: FontWeight.normal))),
+                                                                                ],
+                                                                              ),
+                                                                              decoration: BoxDecoration(
+                                                                                // border: Border.all(
+                                                                                //   color: Colors.black
+                                                                                //   ,width: 0.5
+                                                                                // ),
+                                                                                color: Colors.grey[200],
+                                                                                borderRadius: BorderRadius.circular(4),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        );
+                                                                      },
+                                                                      itemCount: snapshot
+                                                                          .data!
+                                                                          .docs
+                                                                          .length,
+                                                                      shrinkWrap:
+                                                                          true,
+                                                                    );
+                                                        }),
+                                                  ),
+                                                ),
+
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.grey[200],
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(5)),
+                                                    height: 250,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 1.0,
+                                                              right: 1.0),
+                                                      child: Container(
+                                                        height: 250,
+                                                        decoration: BoxDecoration(
+                                                            color: Colors
+                                                                .grey[200],
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5)),
+                                                        child: Container(
+                                                          height: 150,
+                                                          child: StreamBuilder<
+                                                                  QuerySnapshot>(
+                                                              stream: FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      "orders")
+                                                                  .doc(MRANDMRS
+                                                                      .sharedprefs!
+                                                                      .getString(
+                                                                          "uid"))
+                                                                  .collection(
+                                                                      "items")
+                                                                  .doc(snapshot
+                                                                          .data!
+                                                                          .docs[index]
+                                                                      ["id"])
+                                                                  .collection(
+                                                                      "items")
+                                                                  .snapshots(),
+                                                              builder: (context,
+                                                                  snapshot) {
+                                                                if (!snapshot
+                                                                    .hasData) {
+                                                                  return CircularProgressIndicator();
+                                                                } else {
+                                                                  return Scrollbar(
+                                                                    //   isAlwaysShown: true,
+
+                                                                    child: ListView.builder(
+                                                                        scrollDirection: Axis.horizontal,
+                                                                        //                     gridDelegate:
+                                                                        // SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 11),
+
+                                                                        itemCount: snapshot.data!.docs.length,
+                                                                        itemBuilder: (BuildContext context, int index) {
+                                                                          return Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.all(10.0),
+                                                                            child:
+                                                                                GestureDetector(
+                                                                              onTap: () {
+                                                                                // Navigator.push(
+                                                                                //     context,
+                                                                                //     MaterialPageRoute(
+                                                                                //         builder: (context) =>
+                                                                                //             DetailScreen(
+                                                                                //               // queryDocumentSnapshot: snapshot.data.docs[index],
+                                                                                //             )));
+                                                                              },
+                                                                              child: Container(
+                                                                                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5)),
+                                                                                height: 162,
+                                                                                child: Column(
+                                                                                  children: [
+                                                                                    SizedBox(
+                                                                                      width: 10,
+                                                                                    ),
+                                                                                    Container(
+                                                                                      height: 145,
+                                                                                      width: 200,
+                                                                                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.white, image: DecorationImage(image: NetworkImage(snapshot.data!.docs[index]['mainimage']), fit: BoxFit.cover)),
+                                                                                    ),
+                                                                                    SizedBox(
+                                                                                      width: 10,
+                                                                                    ),
+                                                                                    Column(
+                                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                      children: [
+                                                                                        SizedBox(
+                                                                                          height: 5,
+                                                                                        ),
+                                                                                        Row(
+                                                                                          children: [
+                                                                                            Text(
+                                                                                              snapshot.data!.docs[index]['name'].toUpperCase(),
+                                                                                              style: GoogleFonts.lato(
+                                                                                                textStyle: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 10, letterSpacing: 1),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ],
+                                                                                        ),
+                                                                                        Text(
+                                                                                          "QUANTITY : " + snapshot.data!.docs[index]['quanity'].toString(),
+                                                                                          style: GoogleFonts.lato(
+                                                                                            textStyle: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 10, letterSpacing: 1),
+                                                                                          ),
+                                                                                        ),
+                                                                                        Text(
+                                                                                          snapshot.data!.docs[index]['oprice'].toString(),
+                                                                                          style: GoogleFonts.lato(
+                                                                                            textStyle: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 10, letterSpacing: 1),
+                                                                                          ),
+                                                                                        ),
+                                                                                        Text(
+                                                                                          snapshot.data!.docs[index]['Description'].toUpperCase(),
+                                                                                          style: GoogleFonts.lato(
+                                                                                            textStyle: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 10, letterSpacing: 1),
+                                                                                          ),
+                                                                                        ),
+                                                                                        Text(
+                                                                                          snapshot.data!.docs[index]['category'].toUpperCase(),
+                                                                                          style: GoogleFonts.lato(
+                                                                                            textStyle: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 10, letterSpacing: 1),
+                                                                                          ),
+                                                                                        ),
+                                                                                        Text(
+                                                                                          snapshot.data!.docs[index]['wood'].toUpperCase(),
+                                                                                          style: GoogleFonts.lato(
+                                                                                            textStyle: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 10, letterSpacing: 1),
+                                                                                          ),
+                                                                                        ),
+                                                                                        SizedBox(
+                                                                                          height: 5,
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          );
+                                                                        }),
+                                                                  );
+                                                                }
+                                                              }),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                ////
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                              ),
+                            );
+                    }),
+              ),
+            ],
+          ),
+        ),
+        desktop: SingleChildScrollView(
+          child: Column(
+            children: [
+              TopMovileNotifyBlackBox(),
+              MobileTitleWebBox(),
+              Container(
+                color: Colors.white,
+                height: MediaQuery.of(context).size.width,
+                width: MediaQuery.of(context).size.width,
+                child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection("orders")
+                        .doc("psYJNWWwMbMspr0RDMsF0QivWNu1")
+                        .collection("items")
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      return !snapshot.hasData
+                          ? Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : Scrollbar(
+                              //   isAlwaysShown: true,
+                              //
+                              //
+
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10.0, right: 10, bottom: 10, top: 10),
+                                child: GridView.builder(
+                                    primary: false,
+                                    shrinkWrap: true,
+                                    // physics: NeverScrollableScrollPhysics(),
+                                    scrollDirection: Axis.vertical,
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 3),
+                                    itemCount: snapshot.data!.docs.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return GestureDetector(
+                                        onTap: () {
+                                          // Navigator.push(
+                                          //     context,
+                                          //     MaterialPageRoute(
+                                          //         builder: (context) => DetailScreen(
+                                          //               queryDocumentSnapshot:
+                                          //                   snapshot.data.docs[index],
+                                          //             )));
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Container(
+                                            height: 500,
+                                            decoration: BoxDecoration(
+                                                color: Colors.brown[200]!
+                                                    .withOpacity(0.4),
+                                                borderRadius:
+                                                    BorderRadius.circular(5)),
+                                            child: Column(
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 8.0,
+                                                          right: 8.0,
+                                                          top: 8.0),
+                                                  child: Container(
+                                                    color: Colors.grey[200],
+                                                    height: 20,
+                                                    child: Center(
+                                                      child: Text(
+                                                        "Order Id : " +
+                                                            snapshot
+                                                                .data!
+                                                                .docs[index]
+                                                                    ["id"]
+                                                                .toUpperCase(),
+                                                        style: GoogleFonts.lato(
+                                                          textStyle: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 12,
+                                                              letterSpacing: 1),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 8.0,
+                                                          right: 8.0),
+                                                  child: Container(
+                                                    color: Colors.grey[200],
+                                                    height: 20,
+                                                    child: Center(
+                                                      child: Text(
+                                                        "Order Status : " +
+                                                            snapshot
+                                                                .data!
+                                                                .docs[index]
+                                                                    ["status"]
+                                                                .toUpperCase(),
+                                                        style: GoogleFonts.lato(
+                                                          textStyle: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 12,
+                                                              letterSpacing: 1),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 8.0,
+                                                          right: 8.0),
+                                                  child: Container(
+                                                    color: Colors.grey[200],
+                                                    height: 20,
+                                                    child: Center(
+                                                      child: Text(
+                                                        "Payment Status : " +
+                                                            snapshot
+                                                                .data!
+                                                                .docs[index]
+                                                                    ["payment"]
+                                                                .toUpperCase(),
+                                                        style: GoogleFonts.lato(
+                                                          textStyle: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 12,
+                                                              letterSpacing: 1),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 8.0,
+                                                          right: 8.0,
+                                                          top: 0,
+                                                          bottom: 0),
+                                                  child: Container(
+                                                    child: StreamBuilder<
+                                                            QuerySnapshot>(
+                                                        stream: FirebaseFirestore
+                                                            .instance
+                                                            .collection("users")
+                                                            .doc(MRANDMRS
+                                                                .sharedprefs!
+                                                                .getString(
+                                                                    "uid"))
+                                                            .collection(
+                                                                "address")
+                                                            .where("id",
+                                                                isEqualTo:
+                                                                    "1647548953177"
+                                                                        .toString())
+                                                            .snapshots(),
+                                                        builder: (context,
+                                                            snapshot) {
+                                                          return !snapshot
+                                                                  .hasData
+                                                              ? Center(
+                                                                  child:
+                                                                      CircularProgressIndicator(),
+                                                                )
+                                                              : snapshot
+                                                                          .data!
+                                                                          .docs
+                                                                          .length ==
+                                                                      0
+                                                                  ? SizedBox()
+                                                                  : ListView
+                                                                      .builder(
+                                                                      physics:
+                                                                          NeverScrollableScrollPhysics(),
+                                                                      itemBuilder:
+                                                                          (context,
+                                                                              index) {
+                                                                        return Padding(
+                                                                          padding:
+                                                                              const EdgeInsets.only(top: 1.0),
+                                                                          child:
+                                                                              GestureDetector(
+                                                                            onTap:
+                                                                                () {},
+                                                                            child:
+                                                                                Container(
+                                                                              child: Column(
+                                                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                                                children: [
+                                                                                  SizedBox(
+                                                                                    height: 6,
+                                                                                  ),
+                                                                                  Text(snapshot.data!.docs[index]['name'] + "  :  " + snapshot.data!.docs[index]['flatNumber'] + " " + snapshot.data!.docs[index]['street1'] + " , ", textAlign: TextAlign.center, style: GoogleFonts.josefinSans(textStyle: TextStyle(decoration: TextDecoration.none, color: Colors.black, fontSize: 11, fontWeight: FontWeight.normal))),
+                                                                                  Text(snapshot.data!.docs[index]['city'] + "  -  " + snapshot.data!.docs[index]['state'] + "  -  " + " " + snapshot.data!.docs[index]['pincode'], textAlign: TextAlign.center, style: GoogleFonts.josefinSans(textStyle: TextStyle(decoration: TextDecoration.none, color: Colors.black, fontSize: 11, fontWeight: FontWeight.normal))),
+                                                                                  Text(snapshot.data!.docs[index]['country'] + " / " + snapshot.data!.docs[index]['phoneNumber'], textAlign: TextAlign.center, style: GoogleFonts.josefinSans(textStyle: TextStyle(decoration: TextDecoration.none, color: Colors.black, fontSize: 11, fontWeight: FontWeight.normal))),
+                                                                                ],
+                                                                              ),
+                                                                              decoration: BoxDecoration(
+                                                                                // border: Border.all(
+                                                                                //   color: Colors.black
+                                                                                //   ,width: 0.5
+                                                                                // ),
+                                                                                color: Colors.grey[200],
+                                                                                borderRadius: BorderRadius.circular(4),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        );
+                                                                      },
+                                                                      itemCount: snapshot
+                                                                          .data!
+                                                                          .docs
+                                                                          .length,
+                                                                      shrinkWrap:
+                                                                          true,
+                                                                    );
+                                                        }),
+                                                  ),
+                                                ),
+
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.grey[200],
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(5)),
+                                                    height: 250,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 1.0,
+                                                              right: 1.0),
+                                                      child: Container(
+                                                        height: 250,
+                                                        decoration: BoxDecoration(
+                                                            color: Colors
+                                                                .grey[200],
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5)),
+                                                        child: Container(
+                                                          height: 150,
+                                                          child: StreamBuilder<
+                                                                  QuerySnapshot>(
+                                                              stream: FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      "orders")
+                                                                  .doc(MRANDMRS
+                                                                      .sharedprefs!
+                                                                      .getString(
+                                                                          "uid"))
+                                                                  .collection(
+                                                                      "items")
+                                                                  .doc(snapshot
+                                                                          .data!
+                                                                          .docs[index]
+                                                                      ["id"])
+                                                                  .collection(
+                                                                      "items")
+                                                                  .snapshots(),
+                                                              builder: (context,
+                                                                  snapshot) {
+                                                                if (!snapshot
+                                                                    .hasData) {
+                                                                  return CircularProgressIndicator();
+                                                                } else {
+                                                                  return Scrollbar(
+                                                                    //   isAlwaysShown: true,
+
+                                                                    child: ListView.builder(
+                                                                        scrollDirection: Axis.horizontal,
+                                                                        //                     gridDelegate:
+                                                                        // SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 11),
+
+                                                                        itemCount: snapshot.data!.docs.length,
+                                                                        itemBuilder: (BuildContext context, int index) {
+                                                                          return Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.all(10.0),
+                                                                            child:
+                                                                                GestureDetector(
+                                                                              onTap: () {
+                                                                                // Navigator.push(
+                                                                                //     context,
+                                                                                //     MaterialPageRoute(
+                                                                                //         builder: (context) =>
+                                                                                //             DetailScreen(
+                                                                                //               // queryDocumentSnapshot: snapshot.data.docs[index],
+                                                                                //             )));
+                                                                              },
+                                                                              child: Container(
+                                                                                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5)),
+                                                                                height: 162,
+                                                                                child: Column(
+                                                                                  children: [
+                                                                                    SizedBox(
+                                                                                      width: 10,
+                                                                                    ),
+                                                                                    Container(
+                                                                                      height: 145,
+                                                                                      width: 200,
+                                                                                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.white, image: DecorationImage(image: NetworkImage(snapshot.data!.docs[index]['mainimage']), fit: BoxFit.cover)),
+                                                                                    ),
+                                                                                    SizedBox(
+                                                                                      width: 10,
+                                                                                    ),
+                                                                                    Column(
+                                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                      children: [
+                                                                                        SizedBox(
+                                                                                          height: 5,
+                                                                                        ),
+                                                                                        Row(
+                                                                                          children: [
+                                                                                            Text(
+                                                                                              snapshot.data!.docs[index]['name'].toUpperCase(),
+                                                                                              style: GoogleFonts.lato(
+                                                                                                textStyle: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 10, letterSpacing: 1),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ],
+                                                                                        ),
+                                                                                        Text(
+                                                                                          "QUANTITY : " + snapshot.data!.docs[index]['quanity'].toString(),
+                                                                                          style: GoogleFonts.lato(
+                                                                                            textStyle: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 10, letterSpacing: 1),
+                                                                                          ),
+                                                                                        ),
+                                                                                        Text(
+                                                                                          snapshot.data!.docs[index]['oprice'].toString(),
+                                                                                          style: GoogleFonts.lato(
+                                                                                            textStyle: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 10, letterSpacing: 1),
+                                                                                          ),
+                                                                                        ),
+                                                                                        Text(
+                                                                                          snapshot.data!.docs[index]['Description'].toUpperCase(),
+                                                                                          style: GoogleFonts.lato(
+                                                                                            textStyle: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 10, letterSpacing: 1),
+                                                                                          ),
+                                                                                        ),
+                                                                                        Text(
+                                                                                          snapshot.data!.docs[index]['category'].toUpperCase(),
+                                                                                          style: GoogleFonts.lato(
+                                                                                            textStyle: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 10, letterSpacing: 1),
+                                                                                          ),
+                                                                                        ),
+                                                                                        Text(
+                                                                                          snapshot.data!.docs[index]['wood'].toUpperCase(),
+                                                                                          style: GoogleFonts.lato(
+                                                                                            textStyle: TextStyle(fontWeight: FontWeight.w700, color: Colors.black, fontSize: 10, letterSpacing: 1),
+                                                                                          ),
+                                                                                        ),
+                                                                                        SizedBox(
+                                                                                          height: 5,
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          );
+                                                                        }),
+                                                                  );
+                                                                }
+                                                              }),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                ////
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                              ),
+                            );
                     }),
               ),
             ],

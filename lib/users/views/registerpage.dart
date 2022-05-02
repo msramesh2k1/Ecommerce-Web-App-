@@ -8,13 +8,13 @@ import 'package:mrandmrs_ecom_webapp/users/views/Helper.dart';
 import 'package:mrandmrs_ecom_webapp/HomeScreenWidgets/HomeWidgets.dart';
 import 'package:mrandmrs_ecom_webapp/users/views/accountscree.dart';
 import 'package:mrandmrs_ecom_webapp/Widgets/Custom_Widgets.dart';
-import 'package:mrandmrs_ecom_webapp/constants.dart';
 import 'package:mrandmrs_ecom_webapp/helpers/mobilewidgets.dart';
 import 'package:mrandmrs_ecom_webapp/helpers/responsive_widget.dart';
 import 'package:mrandmrs_ecom_webapp/users/views/HomePage.dart';
 import 'package:mrandmrs_ecom_webapp/users/views/loginpage.dart';
 
-import '../../ErrorAlert.dart';
+import '../../constants.dart';
+import 'ErrorAlert.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);

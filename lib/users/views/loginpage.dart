@@ -1,6 +1,5 @@
 //completed
 
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,13 +9,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mrandmrs_ecom_webapp/users/views/Helper.dart';
 import 'package:mrandmrs_ecom_webapp/HomeScreenWidgets/HomeWidgets.dart';
 import 'package:mrandmrs_ecom_webapp/users/views/accountscree.dart';
+import 'package:mrandmrs_ecom_webapp/users/views/phoneauth.dart';
 import 'package:mrandmrs_ecom_webapp/users/views/registerpage.dart';
 import 'package:mrandmrs_ecom_webapp/Widgets/Custom_Widgets.dart';
-import 'package:mrandmrs_ecom_webapp/constants.dart';
+import '../../../constants.dart';
 import 'package:mrandmrs_ecom_webapp/helpers/mobilewidgets.dart';
 import 'package:mrandmrs_ecom_webapp/helpers/responsive_widget.dart';
 
-import '../../ErrorAlert.dart';
+import 'ErrorAlert.dart';
 
 import 'forgotpassword.dart';
 
@@ -31,6 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
   FirebaseAuth auth = FirebaseAuth.instance;
   bool _password = true;
   final TextEditingController emailcontroller = new TextEditingController();
+  final TextEditingController phonecontroller = new TextEditingController();
   final TextEditingController resetemailtexteditingcontroller =
       new TextEditingController();
   final TextEditingController passwordcontroller = new TextEditingController();
@@ -65,8 +66,38 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       Box(height: 30, width: 0),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => MobileLoginScreen()));
+                        },
+                        child: Text(
+                          "Login via Phone",
+                          style: GoogleFonts.dmSans(
+                            textStyle: const TextStyle(
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black,
+                                fontSize: 14,
+                                letterSpacing: 0.5),
+                          ),
+                        ),
+                      ),
+                      Box(height: 15, width: 0),
                       Text(
-                        "Please Enter Your e-mail and password",
+                        "or",
+                        style: GoogleFonts.dmSans(
+                          textStyle: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontSize: 14,
+                              letterSpacing: 0.5),
+                        ),
+                      ),
+                      Box(height: 15, width: 0),
+                      Text(
+                        "Login via E-mail and Password",
                         style: GoogleFonts.dmSans(
                           textStyle: const TextStyle(
                               fontWeight: FontWeight.normal,

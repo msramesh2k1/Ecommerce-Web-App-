@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mrandmrs_ecom_webapp/users/views/Helper.dart';
 import 'package:mrandmrs_ecom_webapp/admin/Admin.dart';
-import 'package:mrandmrs_ecom_webapp/animatedimage.dart';
-import 'package:mrandmrs_ecom_webapp/constants.dart';
+import 'package:mrandmrs_ecom_webapp/users/views/animatedimage.dart';
+import '../../../constants.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:mrandmrs_ecom_webapp/detailproductscreen.dart';
+import 'package:mrandmrs_ecom_webapp/users/views/detailproductscreen.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 
 import '../../HomeScreenWidgets/HomeWidgets.dart';
@@ -46,8 +46,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   Center(
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => Admin()));
+                        // Navigator.push(context,
+                        //     MaterialPageRoute(builder: (_) => Admin()));
                       },
                       child: Text(
                         "LATEST ITEMS",
@@ -70,7 +70,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           .collection("Category")
                           .snapshots(),
                       builder: (context, snapshots) {
-                        return GridView.builder(
+                         return !snapshots.hasData
+                            ? Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : GridView.builder(
                             physics: NeverScrollableScrollPhysics(),
                             itemCount: 6,
                             gridDelegate:
@@ -167,7 +171,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               .limit(4)
                               .snapshots(),
                           builder: (context, snapshot) {
-                            return ListView.builder(
+                             return !snapshot.hasData
+                            ? Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : 
+                      ListView.builder(
                                 physics: NeverScrollableScrollPhysics(),
                                 itemBuilder: ((context, index) {
                                   return Container(
@@ -383,7 +392,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               .limit(1)
                               .snapshots(),
                           builder: (context, snapshot) {
-                            return Column(
+                          return !snapshot.hasData
+                            ? Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            :  Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Container(
@@ -712,7 +725,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "NEW ADDITIONS TO MENU , SUBSCRIBE TO OUR NEWS LETTER",
+                          "FURNITURES ARE MADE IN FINE QUALITY HAND PICKED WOODS",
                           textAlign: TextAlign.center,
                           style: GoogleFonts.dmSans(
                             textStyle: const TextStyle(
@@ -726,31 +739,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(
-                              height: 45,
-                              width: 200,
-                              child: Center(
-                                child: Text(
-                                  "Enter your E-mail Address",
-                                  style: GoogleFonts.dmSans(
-                                    textStyle: const TextStyle(
-                                        fontWeight: FontWeight.normal,
-                                        color: Colors.white,
-                                        fontSize: 14,
-                                        letterSpacing: 1),
-                                  ),
-                                ),
-                              ),
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.white)),
-                            ),
-                            Box(height: 0, width: 10),
+                           
+                     
                             Container(
                               height: 45,
                               width: 100,
                               child: Center(
                                 child: Text(
-                                  "SUBSCRIBE",
+                                  "SHOP US",
                                   style: GoogleFonts.dmSans(
                                     textStyle: const TextStyle(
                                         fontWeight: FontWeight.normal,
@@ -796,8 +792,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   Center(
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => Admin()));
+                        // Navigator.push(context,
+                        //     MaterialPageRoute(builder: (_) => Admin()));
                       },
                       child: Text(
                         "LATEST ITEMS",
@@ -820,57 +816,64 @@ class _HomeScreenState extends State<HomeScreen> {
                           .collection("SearchProducts")
                           .snapshots(),
                       builder: (context, snapshots) {
-                        return GridView.builder(
-                            itemCount: 6,
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3),
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(context,
-                                        MaterialPageRoute(builder: (_) {
-                                      return DetailProductScreen(
-                                          queryDocumentSnapshot:
-                                              snapshots.data!.docs[index]);
-                                    }));
-                                  },
-                                  child: Container(
-                                    child: Column(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(30.0),
-                                          child: Image(
-                                            image: NetworkImage(
-                                              snapshots.data!.docs[index]
-                                                  ['mainimage'],
+                        return !snapshots.hasData
+                            ? Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : GridView.builder(
+                                itemCount: 6,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 3),
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(context,
+                                            MaterialPageRoute(builder: (_) {
+                                          return DetailProductScreen(
+                                              queryDocumentSnapshot:
+                                                  snapshots.data!.docs[index]);
+                                        }));
+                                      },
+                                      child: Container(
+                                        child: Column(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(30.0),
+                                              child: Image(
+                                                image: NetworkImage(
+                                                  snapshots.data!.docs[index]
+                                                      ['mainimage'],
+                                                ),
+                                                fit: BoxFit.cover,
+                                                width: 300,
+                                                height: 300,
+                                              ),
                                             ),
-                                            fit: BoxFit.cover,
-                                            width: 300,
-                                            height: 300,
-                                          ),
+                                            Box(height: 0, width: 0),
+                                            Text(
+                                              snapshots.data!.docs[index]
+                                                  ['name'],
+                                              style: GoogleFonts.dmSans(
+                                                textStyle: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    color: Colors.black,
+                                                    fontSize: 14,
+                                                    letterSpacing: 4),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        Box(height: 0, width: 0),
-                                        Text(
-                                          snapshots.data!.docs[index]['name'],
-                                          style: GoogleFonts.dmSans(
-                                            textStyle: TextStyle(
-                                                fontWeight: FontWeight.normal,
-                                                color: Colors.black,
-                                                fontSize: 14,
-                                                letterSpacing: 4),
-                                          ),
-                                        ),
-                                      ],
+                                        height: 400,
+                                        color: Colors.white,
+                                      ),
                                     ),
-                                    height: 400,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              );
-                            });
+                                  );
+                                });
                       },
                     ),
                   ),
@@ -922,7 +925,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               .limit(4)
                               .snapshots(),
                           builder: (context, snapshot) {
-                            return ListView.builder(
+                             return !snapshot.hasData
+                            ? Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : 
+                    ListView.builder(
                                 physics: NeverScrollableScrollPhysics(),
                                 itemBuilder: ((context, index) {
                                   return Container(
@@ -1138,7 +1146,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               .limit(1)
                               .snapshots(),
                           builder: (context, snapshot) {
-                            return Row(
+                             return !snapshot.hasData
+                            ? Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : 
+                         Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 Image.network(snapshot.data!.docs[0]['image']),
@@ -1436,7 +1449,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "NEW ADDITIONS TO MENU , SUBSCRIBE TO OUR NEWS LETTER",
+                          "FURNITURES ARE MADE IN FINE QUALITY HAND PICKED WOODS",
                           style: GoogleFonts.dmSans(
                             textStyle: const TextStyle(
                                 fontWeight: FontWeight.normal,
@@ -1451,29 +1464,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             Container(
                               height: 45,
-                              width: 350,
-                              child: Center(
-                                child: Text(
-                                  "Enter your E-mail Address",
-                                  style: GoogleFonts.dmSans(
-                                    textStyle: const TextStyle(
-                                        fontWeight: FontWeight.normal,
-                                        color: Colors.white,
-                                        fontSize: 14,
-                                        letterSpacing: 1),
-                                  ),
-                                ),
-                              ),
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.white)),
-                            ),
-                            Box(height: 0, width: 10),
-                            Container(
-                              height: 45,
                               width: 100,
                               child: Center(
                                 child: Text(
-                                  "SUBSCRIBE",
+                                  "SHOP US",
                                   style: GoogleFonts.dmSans(
                                     textStyle: const TextStyle(
                                         fontWeight: FontWeight.normal,

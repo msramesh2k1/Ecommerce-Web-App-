@@ -173,14 +173,12 @@ class _cartState extends State<cart> {
                                     .collection("cart")
                                     .snapshots(),
                                 builder: (context, snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return Center(
-                                      child: Text(
-                                        'Loading...',
-                                      ),
-                                    );
-                                  } else {
-                                    return Scrollbar(
+                                  return !snapshot.hasData
+                            ? Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : 
+                              Scrollbar(
                                       isAlwaysShown: true,
                                       thickness: 10,
 
@@ -549,7 +547,7 @@ class _cartState extends State<cart> {
                                           }),
                                     );
                                   }
-                                }),
+                                ),
                           ),
                         ),
                       ),

@@ -89,12 +89,12 @@ class _cartState extends State<cart> {
                               .collection("cart")
                               .snapshots(),
                           builder: (context, snapshot) {
-                            if (!snapshot.hasData) {
-                              return Text(
-                                'No Data...',
-                              );
-                            } else {
-                              return Scrollbar(
+                         return !snapshot.hasData
+                            ? Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : 
+                     Scrollbar(
                                 //   isAlwaysShown: true,
                                 //  controller: _s`crollController,
                                 child: ListView.builder(
@@ -588,7 +588,7 @@ class _cartState extends State<cart> {
                                     }),
                               );
                             }
-                          }),
+                          ),
                     ),
                     Padding(
                       padding: EdgeInsets.only(

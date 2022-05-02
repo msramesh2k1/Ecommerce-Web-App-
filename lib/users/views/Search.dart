@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mrandmrs_ecom_webapp/Detailer.dart';
-import 'package:mrandmrs_ecom_webapp/constants.dart';
-import 'package:mrandmrs_ecom_webapp/detailproductscreen.dart';
+import 'package:mrandmrs_ecom_webapp/users/views/Detailer.dart';
+import '../../../constants.dart';
+import 'package:mrandmrs_ecom_webapp/users/views/detailproductscreen.dart';
 import 'package:mrandmrs_ecom_webapp/helpers/mobilewidgets.dart';
 import 'package:mrandmrs_ecom_webapp/helpers/responsive_widget.dart';
 

@@ -56,8 +56,7 @@
 //                     Navigator.push(context,
 //                         MaterialPageRoute(builder: (_) => ProductPage()));
 //                   },
-//                   child: Padding(
-//                     padding: const EdgeInsets.symmetric(
+//                   child: Padding(//                     padding: const EdgeInsets.symmetric(
 //                         horizontal: 10, vertical: 10),
 //                     child: Container(
 //                       height: 300,

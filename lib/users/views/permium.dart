@@ -2,11 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mrandmrs_ecom_webapp/constants.dart';
-import 'package:mrandmrs_ecom_webapp/detailproductscreen.dart';
+import '../../../constants.dart';
+import 'package:mrandmrs_ecom_webapp/users/views/detailproductscreen.dart';
 
+import '../../CartPage.dart';
 import '../../HomeScreenWidgets/HomeWidgets.dart';
 import '../../Widgets/Custom_Widgets.dart';
+import 'Helper.dart';
+import 'Search.dart';
+import 'accountscree.dart';
+import 'loginpage.dart';
 
 class Permium extends StatefulWidget {
   const Permium({Key? key}) : super(key: key);
@@ -75,14 +80,47 @@ class _AllItemsScreenState extends State<Permium> {
                   ),
                 ),
                 Spacer(),
-                Row(
+              Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(EvaIcons.personOutline),
+                    GestureDetector(
+
+              
+                          onTap: () {
+                          MRANDMRS.sharedprefs!.getString("uid") == null
+                              ? Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => LoginScreen()))
+                              : Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => AccountScreen()));},
+                      
+                      
+                      child: Icon(EvaIcons.personOutline)),
                     const Box(height: 0, width: 20),
-                    Icon(EvaIcons.searchOutline),
+                    GestureDetector(
+                      
+                      onTap: (){
+                            Navigator.push(context,
+                              MaterialPageRoute(builder: (_) => Search()));
+                      },
+                      
+                      child: GestureDetector(child: Icon(EvaIcons.searchOutline))),
                     const Box(height: 0, width: 20),
-                    Icon(EvaIcons.shoppingBagOutline),
+                    GestureDetector(
+                      onTap: (){
+                         MRANDMRS.sharedprefs!.getString("uid") == null
+                              ? Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => LoginScreen()))
+                              : Navigator.push(context,
+                                  MaterialPageRoute(builder: (_) => cart()));
+                      },
+                      
+                      child: Icon(EvaIcons.shoppingBagOutline)),
                     const Box(height: 0, width: 40),
                   ],
                 ),
@@ -104,7 +142,12 @@ class _AllItemsScreenState extends State<Permium> {
               .collection("SearchProducts")
               .snapshots(),
           builder: (context, snapshots) {
-            return GridView.builder(
+             return !snapshots.hasData
+                            ? Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : 
+      GridView.builder(
                 itemCount: snapshots.data!.docs.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3),
